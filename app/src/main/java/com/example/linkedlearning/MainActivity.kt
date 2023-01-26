@@ -16,8 +16,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.ui.theme.LinkedLearningTheme
+import com.example.linkedlearning.views.auth.OTPverify.OTPScreen
 import com.example.linkedlearning.views.dashboard.DashboardScreen
-import com.example.linkedlearning.views.login.LoginScreen
+import com.example.linkedlearning.views.auth.login.LoginScreen
+import com.example.linkedlearning.views.auth.signup.SignupScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,6 +40,22 @@ class MainActivity : ComponentActivity() {
                    DashboardScreen(
                        onNavigate = {navController.navigate(Routes.LOGIN)}
                    )
+               }
+               composable(Routes.SIGNUP){
+                   SignupScreen(
+
+                       onNavigate = {
+                           navController.popBackStack()
+                           navController.navigate(it)
+                       }
+                   )
+               }
+               composable(Routes.OTPVERIFY){
+                   OTPScreen(
+                       onNavigate ={
+                           navController.popBackStack()
+                           navController.navigate(it)
+                       } )
                }
                 }
             }
