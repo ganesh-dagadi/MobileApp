@@ -1,5 +1,6 @@
 package com.example.linkedlearning.views.auth.signup
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -7,10 +8,13 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Color.Companion.Red
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
@@ -20,6 +24,8 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.R
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.views.UIevents
+import kotlinx.coroutines.launch
 
 @Composable
 fun SignupScreen(
@@ -30,8 +36,30 @@ fun SignupScreen(
     val password = viewModel.password.observeAsState()
     val confirmPassword = viewModel.confirmPassword.observeAsState()
     val isChecked = viewModel.isChecked.observeAsState()
-    Scaffold() {
-        Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).fillMaxWidth() , horizontalAlignment = Alignment.CenterHorizontally) {
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+    //Handling UI events
+    LaunchedEffect(key1 = true){
+        viewModel.eventFlow.collect{event->
+            Log.i("errorMsg" , "In hereeeee")
+            when(event){
+                is UIevents.ShowErrorSnackBar->{
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.msg,
+
+                    )
+                }
+            }
+        }
+    }
+
+    Scaffold(
+        scaffoldState = scaffoldState
+    ) {
+        Column(modifier = Modifier
+            .fillMaxWidth()
+            .verticalScroll(rememberScrollState())
+            .fillMaxWidth() , horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.linked_learning__logo),
                 contentDescription = "Logo",
@@ -75,7 +103,11 @@ fun SignupScreen(
                 visualTransformation = PasswordVisualTransformation()
             )
             //Button
-            Button(onClick = { onNavigate(Routes.OTPVERIFY) } ,
+            Button(onClick = {
+                 coroutineScope.launch {
+                     viewModel.signupUser()
+                 }
+            } ,
                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
                 modifier = Modifier.padding(10.dp)
             ) {
