@@ -1,10 +1,11 @@
 package com.example.linkedlearning.views.auth.login
 
+import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
-class LoginViewModel : ViewModel() {
+class LoginViewModel(context : Context) : ViewModel() {
     private val _email = MutableLiveData<String>()
     val email: LiveData<String>
     get() = _email

@@ -1,5 +1,6 @@
 package com.example.linkedlearning.views.auth.signup
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -21,18 +22,30 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.R
 import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.views.UIevents
 import kotlinx.coroutines.launch
 
+
+class SignupViewModelFactory(private val context: Context) :
+    ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = SignupViewModel(context) as T
+}
+
 @Composable
 fun SignupScreen(
-    onNavigate : (to:String)->Unit
+    onNavigate : (to:String)->Unit,
+    showSnackBar:(to:String)->Unit,
+    context: Context
 ){
-    val viewModel = viewModel<SignupViewModel>()
+//    val viewModel = viewModel<SignupViewModel>()
+    val viewModel:SignupViewModel = viewModel(factory = SignupViewModelFactory(context))
     val email = viewModel.email.observeAsState()
+    val username = viewModel.username.observeAsState()
     val password = viewModel.password.observeAsState()
     val confirmPassword = viewModel.confirmPassword.observeAsState()
     val isChecked = viewModel.isChecked.observeAsState()
@@ -41,12 +54,11 @@ fun SignupScreen(
     //Handling UI events
     LaunchedEffect(key1 = true){
         viewModel.eventFlow.collect{event->
-            Log.i("errorMsg" , "In hereeeee")
+
             when(event){
                 is UIevents.ShowErrorSnackBar->{
                     scaffoldState.snackbarHostState.showSnackbar(
                         message = event.msg,
-
                     )
                 }
             }
@@ -77,6 +89,18 @@ fun SignupScreen(
                     focusedBorderColor = MaterialTheme.colors.secondary
                 )
             )
+            OutlinedTextField(value = username.value.toString(), onValueChange = {
+                    newText->viewModel.setUsernameText(newText)
+            },
+                label = { Text(text = "Username") },
+                modifier = Modifier
+                    .padding(10.dp)
+                    .height(60.dp),
+                colors = TextFieldDefaults.outlinedTextFieldColors(
+                    focusedBorderColor = MaterialTheme.colors.secondary
+                )
+            )
+
             OutlinedTextField(value = password.value.toString(), onValueChange = {
                     newText->viewModel.setPasswordText(newText)
             },
@@ -102,18 +126,6 @@ fun SignupScreen(
                 ),
                 visualTransformation = PasswordVisualTransformation()
             )
-            //Button
-            Button(onClick = {
-                 coroutineScope.launch {
-                     viewModel.signupUser()
-                 }
-            } ,
-                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
-                modifier = Modifier.padding(10.dp)
-            ) {
-                Text("Signup" , modifier = Modifier.padding(top = 1.dp , bottom = 1.dp , start = 2.dp , end = 2.dp), fontSize = 18.sp , color = MaterialTheme.colors.onPrimary)
-            }
-
             Row (
                 horizontalArrangement = Arrangement.Center
             ){
@@ -132,7 +144,23 @@ fun SignupScreen(
                 // adding padding to our text of checkbox
                 Text(text = "I agree to Terms and condition and Privacy policy", modifier = Modifier.padding(start= 2.dp))
             }
-            // Signup Prompt
+            //Button
+            Button(onClick = {
+                 coroutineScope.launch {
+                     if(viewModel.signupUser()){
+                         onNavigate(Routes.OTPVERIFY)
+                         showSnackBar("OTP sent by mail")
+                     }
+                 }
+            } ,
+                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
+                modifier = Modifier.padding(10.dp)
+            ) {
+                Text("Signup" , modifier = Modifier.padding(top = 1.dp , bottom = 1.dp , start = 2.dp , end = 2.dp), fontSize = 18.sp , color = MaterialTheme.colors.onPrimary)
+            }
+
+
+            // Login Prompt
             ClickableText(text = AnnotatedString("Already have an account? Login"), onClick = {
                 onNavigate(Routes.LOGIN)
             } , modifier = Modifier.padding(10.dp) , style = TextStyle(color = Color.Blue , fontSize = 15.sp) )

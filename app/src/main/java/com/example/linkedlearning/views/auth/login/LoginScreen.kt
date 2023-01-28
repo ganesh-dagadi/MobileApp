@@ -1,4 +1,5 @@
 package com.example.linkedlearning.views.auth.login
+import android.content.Context
 import android.graphics.Color
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.Image
@@ -27,12 +28,20 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.MainActivity
 import com.example.linkedlearning.R
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.views.auth.signup.SignupViewModel
+import com.example.linkedlearning.views.auth.signup.SignupViewModelFactory
+
+class LoginViewModelFactory(private val context: Context) :
+    ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = LoginViewModel(context) as T
+}
 
 @Composable
 fun LoginScreen(
-    onNavigate: (to:String)-> Unit
+    onNavigate: (to:String)-> Unit,
+    context: Context
 ){
-    val viewModel = viewModel<LoginViewModel>()
+    val viewModel:LoginViewModel = viewModel(factory = LoginViewModelFactory(context))
     val email = viewModel.email.observeAsState()
     val password = viewModel.password.observeAsState()
     Scaffold() {

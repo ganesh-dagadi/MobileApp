@@ -1,16 +1,28 @@
 package com.example.linkedlearning.views.auth.signup
 
+import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
+import com.example.linkedlearning.data.api.ApiCore
+import com.example.linkedlearning.data.api.auth.AuthAPI
+import com.example.linkedlearning.data.api.auth.data.CreateUser
+import com.example.linkedlearning.data.api.auth.data.SignupResponse
+import com.example.linkedlearning.data.authData.AuthRepo
+import com.example.linkedlearning.data.authData.AuthRepoImpl
 import com.example.linkedlearning.views.UIevents
+import com.google.gson.Gson
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import org.json.JSONObject
+import retrofit2.HttpException
+import java.io.IOException
 
-class SignupViewModel : ViewModel() {
+
+
+class SignupViewModel(context:Context) : ViewModel(){
+
+    val repoInstance = AuthRepo(context)
     private val _email = MutableLiveData<String>()
     val email: LiveData<String>
         get() = _email
@@ -32,10 +44,14 @@ class SignupViewModel : ViewModel() {
     val isChecked: LiveData<Boolean>
         get() = _isChecked
 
+    private val _username = MutableLiveData<String>()
+    val username: LiveData<String>
+        get() = _username
     init {
         _email.value = ""
         _password.value = ""
         _confirmPassword.value = ""
+        _username.value = ""
         _isChecked.value = false
     }
 
@@ -48,6 +64,10 @@ class SignupViewModel : ViewModel() {
     }
     fun setPasswordText(newText:String){
         _password.value = newText
+    }
+
+    fun setUsernameText(newText:String){
+        _username.value = newText
     }
 
     fun toggleIsChecked(){
@@ -66,26 +86,49 @@ class SignupViewModel : ViewModel() {
 
     // Authentication functions
 
-    suspend fun signupUser(){
+    suspend fun signupUser():Boolean{
+
         if(_email.value!!.isEmpty() || _password.value!!.isEmpty()){
-            Log.i("errorMsg" , "Empty Parameters")
             triggerEvents(UIevents.ShowErrorSnackBar("All parameters required" , ))
         }
         else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()){
-            Log.i("error" , "Email format")
             triggerEvents(UIevents.ShowErrorSnackBar("Enter the correct email"))
         }
         else if(_password.value != _confirmPassword.value){
-            Log.i("error" , "Passwords dont match")
             triggerEvents(UIevents.ShowErrorSnackBar("Passwords dont match"))
         }else if(_isChecked.value == false){
-            Log.i("error" , "Checkbox unchecked")
             triggerEvents(UIevents.ShowErrorSnackBar("Accept the terms and conditions"))
         }else{
-
+            //All validations passed
+            val retrofitInstance = ApiCore.retrofit.create(AuthAPI::class.java)
+            val userData = CreateUser(
+                _email.value.toString(),
+                false ,
+                _password.value.toString() , _username.value.toString())
+            val response = try{
+                Log.i("responseMsg" , "Sending msg")
+                retrofitInstance.createUser(userData)
+            }catch(e:IOException){
+                Log.i("responseMsg" , "Here in io")
+                triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
+                return false
+            }catch(e:HttpException){
+                Log.i("responseMsg" , "Here in something")
+                triggerEvents(UIevents.ShowErrorSnackBar("Something went wrong. Try again later"))
+                return false
+            }
+            if(response.code() == 200 && response.body() != null){
+                triggerEvents(UIevents.ShowErrorSnackBar(response.body()!!.msg))
+                repoInstance.setUserId(response.body()!!.user._id)
+                return true
+            }else if(response.errorBody() != null){
+                val errResponse = Gson().fromJson(response.errorBody()!!.string() , SignupResponse::class.java)
+                triggerEvents(UIevents.ShowErrorSnackBar(errResponse.err))
+                return false
+            }
         }
 
-
+        return false
 
     }
 

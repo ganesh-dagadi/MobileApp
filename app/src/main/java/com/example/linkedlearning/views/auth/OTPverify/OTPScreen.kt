@@ -1,11 +1,15 @@
 package com.example.linkedlearning.views.auth.OTPverify
 
+import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -14,18 +18,31 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.R
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.data.authData.AuthRepo
+import com.example.linkedlearning.views.auth.signup.SignupViewModel
+import com.example.linkedlearning.views.auth.signup.SignupViewModelFactory
+import kotlinx.coroutines.launch
+
+class OTPVerifyViewModelFactory(private val context: Context) :
+    ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = OTPVerifyViewModel(context) as T
+}
 
 @Composable
 fun OTPScreen(
-    onNavigate:(to:String)->Unit
+    onNavigate:(to:String)->Unit,
+    context: Context
 ){
-    val viewModel = viewModel<OTPVerifyViewModel>()
+    val viewModel:OTPVerifyViewModel = viewModel(factory = OTPVerifyViewModelFactory(context))
     val otpValue =  viewModel.otpVal.observeAsState()
-    
-    Scaffold() {
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+    Scaffold(scaffoldState = scaffoldState) {
         Column(modifier = Modifier.fillMaxWidth() , horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.linked_learning__logo),
@@ -48,7 +65,11 @@ fun OTPScreen(
             )
 
             //Button
-            Button(onClick = { /*TODO*/ } ,
+            Button(onClick = {
+                    coroutineScope.launch{
+                        viewModel.getUserId()
+                    }
+                } ,
                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
                 modifier = Modifier.padding(10.dp)
             ) {
