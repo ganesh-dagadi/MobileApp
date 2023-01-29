@@ -40,7 +40,12 @@ class MainActivity : ComponentActivity() {
                                     navController.popBackStack()
                                     navController.navigate(it)
                                 },
-                                context = context
+                                context = context,
+                                showSnackBar = {
+                                    GlobalScope.launch {
+                                        scaffoldState.snackbarHostState.showSnackbar(it)
+                                    }
+                                }
                             )
                         }
                         composable(Routes.DASHBOARD){
@@ -69,7 +74,12 @@ class MainActivity : ComponentActivity() {
                                     navController.popBackStack()
                                     navController.navigate(it)
                                 },
-                                context = context
+                                context = context,
+                                showSnackBar = {
+                                    GlobalScope.launch {
+                                        scaffoldState.snackbarHostState.showSnackbar(it)
+                                    }
+                                }
                             )
                         }
                     }

@@ -89,13 +89,13 @@ class SignupViewModel(context:Context) : ViewModel(){
     suspend fun signupUser():Boolean{
 
         if(_email.value!!.isEmpty() || _password.value!!.isEmpty()){
-            triggerEvents(UIevents.ShowErrorSnackBar("All parameters required" , ))
+            triggerEvents(UIevents.ShowErrorSnackBar("All parameters required"))
         }
         else if(!android.util.Patterns.EMAIL_ADDRESS.matcher(_email.value).matches()){
             triggerEvents(UIevents.ShowErrorSnackBar("Enter the correct email"))
         }
         else if(_password.value != _confirmPassword.value){
-            triggerEvents(UIevents.ShowErrorSnackBar("Passwords dont match"))
+            triggerEvents(UIevents.ShowErrorSnackBar("Passwords don't match"))
         }else if(_isChecked.value == false){
             triggerEvents(UIevents.ShowErrorSnackBar("Accept the terms and conditions"))
         }else{
@@ -106,14 +106,11 @@ class SignupViewModel(context:Context) : ViewModel(){
                 false ,
                 _password.value.toString() , _username.value.toString())
             val response = try{
-                Log.i("responseMsg" , "Sending msg")
                 retrofitInstance.createUser(userData)
             }catch(e:IOException){
-                Log.i("responseMsg" , "Here in io")
                 triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
                 return false
             }catch(e:HttpException){
-                Log.i("responseMsg" , "Here in something")
                 triggerEvents(UIevents.ShowErrorSnackBar("Something went wrong. Try again later"))
                 return false
             }

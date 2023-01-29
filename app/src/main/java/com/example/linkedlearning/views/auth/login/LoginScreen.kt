@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color.Companion.Blue
@@ -28,8 +30,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.MainActivity
 import com.example.linkedlearning.R
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.views.UIevents
 import com.example.linkedlearning.views.auth.signup.SignupViewModel
 import com.example.linkedlearning.views.auth.signup.SignupViewModelFactory
+import kotlinx.coroutines.launch
 
 class LoginViewModelFactory(private val context: Context) :
     ViewModelProvider.NewInstanceFactory() {
@@ -39,12 +43,28 @@ class LoginViewModelFactory(private val context: Context) :
 @Composable
 fun LoginScreen(
     onNavigate: (to:String)-> Unit,
+    showSnackBar:(to:String)->Unit,
     context: Context
 ){
     val viewModel:LoginViewModel = viewModel(factory = LoginViewModelFactory(context))
     val email = viewModel.email.observeAsState()
     val password = viewModel.password.observeAsState()
-    Scaffold() {
+    val scaffoldState = rememberScaffoldState()
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = true){
+        viewModel.eventFlow.collect{event->
+
+            when(event){
+                is UIevents.ShowErrorSnackBar->{
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.msg,
+                    )
+                }
+            }
+        }
+    }
+    Scaffold(scaffoldState = scaffoldState) {
         Column(modifier = Modifier.fillMaxWidth() , horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
                 painter = painterResource(id = R.drawable.linked_learning__logo),
@@ -77,7 +97,14 @@ fun LoginScreen(
             )
 
             //Button
-            Button(onClick = { /*TODO*/ } ,
+            Button(onClick = {
+                coroutineScope.launch {
+                    if(viewModel.login()){
+                        showSnackBar("Logged in successfully")
+                        onNavigate(Routes.DASHBOARD)
+                    }
+                }
+            } ,
                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
                 modifier = Modifier.padding(10.dp)
             ) {

@@ -20,6 +20,38 @@ class AuthRepo(context: Context):AuthRepoImpl{
 
     override suspend fun getUserId(): String? {
         return sf.getString("userId" , null)
-        return "hi"
+    }
+
+    override suspend fun getAccessToken():String? {
+        return sf.getString("accessToken" , null)
+    }
+
+    override suspend fun setAccessToken(token: String) {
+        with(sf.edit()){
+            putString("accessToken" , token)
+            apply()
+        }
+    }
+
+    override suspend fun getRefreshToken():String? {
+        return sf.getString("refreshToken" , null)
+    }
+
+    override suspend fun setRefreshToken(token: String) {
+        with(sf.edit()){
+            putString("refreshToken" , token)
+            apply()
+        }
+    }
+
+    override suspend fun getLoginState(): Boolean? {
+        return sf.getBoolean("isLoggedIn" , false)
+    }
+
+    override suspend fun setLoginState(bool: Boolean) {
+        with(sf.edit()){
+            putBoolean("isLoggedIn" , bool)
+            apply()
+        }
     }
 }

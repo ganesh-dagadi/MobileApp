@@ -23,7 +23,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.R
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.components.TimerComponent
 import com.example.linkedlearning.data.authData.AuthRepo
+import com.example.linkedlearning.views.UIevents
 import com.example.linkedlearning.views.auth.signup.SignupViewModel
 import com.example.linkedlearning.views.auth.signup.SignupViewModelFactory
 import kotlinx.coroutines.launch
@@ -36,12 +38,28 @@ class OTPVerifyViewModelFactory(private val context: Context) :
 @Composable
 fun OTPScreen(
     onNavigate:(to:String)->Unit,
+    showSnackBar:(msg:String)->Unit,
     context: Context
 ){
     val viewModel:OTPVerifyViewModel = viewModel(factory = OTPVerifyViewModelFactory(context))
     val otpValue =  viewModel.otpVal.observeAsState()
+    val isResendActive = viewModel.isResendActive.observeAsState()
     val scaffoldState = rememberScaffoldState()
     val coroutineScope = rememberCoroutineScope()
+
+    //Handling UI events
+    LaunchedEffect(key1 = true){
+        viewModel.eventFlow.collect{event->
+
+            when(event){
+                is UIevents.ShowErrorSnackBar->{
+                    scaffoldState.snackbarHostState.showSnackbar(
+                        message = event.msg,
+                    )
+                }
+            }
+        }
+    }
     Scaffold(scaffoldState = scaffoldState) {
         Column(modifier = Modifier.fillMaxWidth() , horizontalAlignment = Alignment.CenterHorizontally) {
             Image(
@@ -67,7 +85,10 @@ fun OTPScreen(
             //Button
             Button(onClick = {
                     coroutineScope.launch{
-                        viewModel.getUserId()
+                        if(viewModel.verifyOTPReq()){
+                            onNavigate(Routes.LOGIN)
+                            showSnackBar("Account verified. Please Login")
+                        }
                     }
                 } ,
                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
@@ -77,9 +98,21 @@ fun OTPScreen(
             }
 
             // Resend Prompt
-            ClickableText(text = AnnotatedString("Resend OTP"), onClick = {
-                onNavigate(Routes.SIGNUP)
-            } , modifier = Modifier.padding(10.dp) , style = TextStyle(color = Color.Blue , fontSize = 15.sp) )
+            if(isResendActive.value == true){
+                ClickableText(text = AnnotatedString("Resend OTP"), onClick = {
+                    coroutineScope.launch {
+                        viewModel.resendOTP()
+                    }
+                } , modifier = Modifier.padding(10.dp) , style = TextStyle(color = Color.Blue , fontSize = 15.sp) )
+            }else{
+                TimerComponent(
+                    seconds = 100,
+                    resetResend = {
+                        Log.i("UIMsg" , "Hit")
+                        viewModel.setReset(true)
+                    }
+                )
+            }
         }
     }
 }
