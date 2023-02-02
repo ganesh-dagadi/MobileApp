@@ -4,5 +4,5 @@ data class LoginRes(
     val msg: String,
     val tokens: Tokens,
     val user: User,
-    val err:String
+    val err:String,
 )

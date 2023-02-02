@@ -22,4 +22,10 @@ interface AuthAPI {
 
     @PATCH("auth/login")
     suspend fun login(@Body user:LoginReq):Response<LoginRes>
+
+    @PATCH("auth/newtoken")
+    suspend fun refreshToken():Response<LoginRes>
+
+    @GET("auth/protected")
+    suspend fun getProtected():Response<LoginRes>
 }

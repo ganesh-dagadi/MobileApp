@@ -21,7 +21,7 @@ import java.io.IOException
 
 
 class SignupViewModel(context:Context) : ViewModel(){
-
+    val context = context
     val repoInstance = AuthRepo(context)
     private val _email = MutableLiveData<String>()
     val email: LiveData<String>
@@ -100,7 +100,7 @@ class SignupViewModel(context:Context) : ViewModel(){
             triggerEvents(UIevents.ShowErrorSnackBar("Accept the terms and conditions"))
         }else{
             //All validations passed
-            val retrofitInstance = ApiCore.retrofit.create(AuthAPI::class.java)
+            val retrofitInstance = ApiCore(this.context).getInstance().create(AuthAPI::class.java)
             val userData = CreateUser(
                 _email.value.toString(),
                 false ,

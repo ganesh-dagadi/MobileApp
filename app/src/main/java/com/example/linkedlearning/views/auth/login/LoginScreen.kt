@@ -1,6 +1,8 @@
 package com.example.linkedlearning.views.auth.login
+import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Color
+import android.util.Log
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
@@ -30,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.MainActivity
 import com.example.linkedlearning.R
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.data.authData.AuthRepo
 import com.example.linkedlearning.views.UIevents
 import com.example.linkedlearning.views.auth.signup.SignupViewModel
 import com.example.linkedlearning.views.auth.signup.SignupViewModelFactory
@@ -40,6 +43,7 @@ class LoginViewModelFactory(private val context: Context) :
     override fun <T : ViewModel> create(modelClass: Class<T>): T = LoginViewModel(context) as T
 }
 
+@SuppressLint("CoroutineCreationDuringComposition")
 @Composable
 fun LoginScreen(
     onNavigate: (to:String)-> Unit,
@@ -47,10 +51,17 @@ fun LoginScreen(
     context: Context
 ){
     val viewModel:LoginViewModel = viewModel(factory = LoginViewModelFactory(context))
+    val coroutineScope = rememberCoroutineScope()
+
+    LaunchedEffect(key1 = true){
+        if(viewModel.getLoginStatus() == true){
+            onNavigate(Routes.DASHBOARD)
+        }
+    }
     val email = viewModel.email.observeAsState()
     val password = viewModel.password.observeAsState()
     val scaffoldState = rememberScaffoldState()
-    val coroutineScope = rememberCoroutineScope()
+
 
     LaunchedEffect(key1 = true){
         viewModel.eventFlow.collect{event->
@@ -99,6 +110,7 @@ fun LoginScreen(
             //Button
             Button(onClick = {
                 coroutineScope.launch {
+                    Log.i("APIEvent" , "On click entered")
                     if(viewModel.login()){
                         showSnackBar("Logged in successfully")
                         onNavigate(Routes.DASHBOARD)

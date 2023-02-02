@@ -7,9 +7,9 @@ import android.content.Context.MODE_PRIVATE
 import com.example.linkedlearning.MainActivity
 
 
-class AuthRepo(context: Context):AuthRepoImpl{
-
-    private val sf = context.getSharedPreferences("auth" , MODE_PRIVATE)
+class AuthRepo(context:Context):AuthRepoImpl{
+    val appContext = context.applicationContext
+    private val sf = appContext.getSharedPreferences("auth" , MODE_PRIVATE)
 
     override suspend fun setUserId(id: String){
         with(sf.edit()){
@@ -53,5 +53,11 @@ class AuthRepo(context: Context):AuthRepoImpl{
             putBoolean("isLoggedIn" , bool)
             apply()
         }
+    }
+
+    override suspend fun clearSf() {
+        val editor = sf.edit()
+        editor.clear()
+        editor.apply()
     }
 }

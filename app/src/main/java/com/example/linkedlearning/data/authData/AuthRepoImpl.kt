@@ -10,4 +10,5 @@ interface AuthRepoImpl{
     suspend fun getRefreshToken():String?
     suspend fun setLoginState(bool:Boolean)
     suspend fun getLoginState():Boolean?
+    suspend fun clearSf():Unit
 }

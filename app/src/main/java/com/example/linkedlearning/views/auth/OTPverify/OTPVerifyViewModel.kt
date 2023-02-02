@@ -21,6 +21,7 @@ import java.io.IOException
 import java.util.Timer
 
 class OTPVerifyViewModel(context: Context): ViewModel() {
+    val context = context
     private val repoInstance = AuthRepo(context)
     private var userId:String? = ""
     private val _otpVal = MutableLiveData<String>()
@@ -54,7 +55,7 @@ class OTPVerifyViewModel(context: Context): ViewModel() {
     suspend fun verifyOTPReq():Boolean{
         userId = repoInstance.getUserId()
         val reqData = otpVerifyReq(_otpVal.value.toString() ,userId)
-        val retrofitInstance = ApiCore.retrofit.create(AuthAPI::class.java)
+        val retrofitInstance = ApiCore(this.context).getInstance().create(AuthAPI::class.java)
         val response:Response<OtpVerifyRes> = try{
             retrofitInstance.verifyAccount(reqData)
         }catch(e:IOException){
@@ -84,7 +85,7 @@ class OTPVerifyViewModel(context: Context): ViewModel() {
         setReset(false)
         userId = repoInstance.getUserId()
         val reqData = otpVerifyReq(userId = userId , otp = null)
-        val retrofitInstance = ApiCore.retrofit.create(AuthAPI::class.java)
+        val retrofitInstance = ApiCore(this.context).getInstance().create(AuthAPI::class.java)
         val response:Response<OtpVerifyRes> = try{
             retrofitInstance.resendOTP(reqData)
         }catch(e:IOException){

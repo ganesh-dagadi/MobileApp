@@ -21,6 +21,7 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class LoginViewModel(context : Context) : ViewModel() {
+    val context = context
     private val repoInstance = AuthRepo(context)
     private val _email = MutableLiveData<String>()
     val email: LiveData<String>
@@ -52,12 +53,14 @@ class LoginViewModel(context : Context) : ViewModel() {
     }
 
     suspend fun login():Boolean{
+        Log.i("APIEvent" , "Entered Function")
         if(_email.value!!.isEmpty() || _password.value!!.isEmpty()){
             triggerEvents(UIevents.ShowErrorSnackBar("Fill all the fields"))
         }else{
             val reqData = LoginReq(_email.value.toString() , _password.value.toString())
-            val retrofitInstance = ApiCore.retrofit.create(AuthAPI::class.java)
+            val retrofitInstance = ApiCore(this.context).getInstance().create(AuthAPI::class.java)
             val response = try{
+
                 retrofitInstance.login(reqData)
             }catch(e:IOException){
                 triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
@@ -81,5 +84,9 @@ class LoginViewModel(context : Context) : ViewModel() {
             }
         }
         return false
+    }
+
+    suspend fun getLoginStatus():Boolean?{
+        return repoInstance.getLoginState()
     }
 }
