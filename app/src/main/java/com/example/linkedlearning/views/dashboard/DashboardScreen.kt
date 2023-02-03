@@ -35,7 +35,6 @@ fun DashboardScreen(
                 modifier = Modifier
                     .padding(10.dp),
                 onClick = {
-                    Log.i("UIEvent" , "Hey babe")
                     val repoInstance = AuthRepo(context)
                     coroutineScope.launch {
                         repoInstance.clearSf()
@@ -50,10 +49,9 @@ fun DashboardScreen(
                 modifier = Modifier
                     .padding(10.dp),
                 onClick = {
-                    Log.i("APIEvent" , "Calling protected")
                     coroutineScope.launch {
-                        val response = retrofitInstance.getProtected();
-                        Log.i("ApiEvent" , response.body()!!.msg)
+                        val response = retrofitInstance.getProtected()
+                        Log.i("APIEvent" , response.body()!!.msg)
                     }
                 }
             ) {
