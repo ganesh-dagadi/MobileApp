@@ -1,14 +1,25 @@
 package com.example.linkedlearning.views.dashboard
 
 import android.content.Context
+import android.text.style.ClickableSpan
 import android.util.Log
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Article
+import androidx.compose.material.icons.filled.Logout
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.linkedlearning.Utils.Routes
@@ -19,45 +30,40 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun DashboardScreen(
-    onNavigate : ()->Unit,
+    onNavigate : (to:String)->Unit,
     context: Context
 ){
     val coroutineScope = rememberCoroutineScope()
     val repoInstance = AuthRepo(context)
     val retrofitInstance = ApiCore(context).getInstance().create(AuthAPI::class.java)
 
-    Scaffold(scaffoldState = rememberScaffoldState()) {
-        Column{
-            Text(text = "Dashboard")
+    Scaffold(
+        scaffoldState = rememberScaffoldState(),
+        bottomBar = {
+            BottomNavigation (backgroundColor = MaterialTheme.colors.secondary , modifier = Modifier.border(1.dp , MaterialTheme.colors.secondary)){
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceAround,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 5.dp)
 
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
-                modifier = Modifier
-                    .padding(10.dp),
-                onClick = {
-                    val repoInstance = AuthRepo(context)
-                    coroutineScope.launch {
-                        repoInstance.clearSf()
+                ) {
+                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Filled.Article , contentDescription = "Article icon" , tint = Color.White)
+                        Text("Courses" , style = TextStyle(color = Color.White))
+                    }
+                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Filled.Person, contentDescription = "Article icon" , tint = Color.White)
+                        Text("Profile" , style = TextStyle(color = Color.White))
+                    }
+                    Column(Modifier.clickable { onNavigate(Routes.SIGNUP) } , horizontalAlignment = Alignment.CenterHorizontally) {
+                        Icon(Icons.Filled.Logout ,  contentDescription = "Article icon" , tint = Color.White)
+                        Text("Logout" ,style = TextStyle(color = Color.White))
                     }
                 }
-            ) {
-                Text("Login" , modifier = Modifier.padding(top = 1.dp , bottom = 1.dp , start = 2.dp , end = 2.dp), fontSize = 18.sp , color = MaterialTheme.colors.onPrimary)
             }
-
-            Button(
-                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
-                modifier = Modifier
-                    .padding(10.dp),
-                onClick = {
-                    coroutineScope.launch {
-                        val response = retrofitInstance.getProtected()
-                        Log.i("APIEvent" , response.body()!!.msg)
-                    }
-                }
-            ) {
-                Text("Access protected" , modifier = Modifier.padding(top = 1.dp , bottom = 1.dp , start = 2.dp , end = 2.dp), fontSize = 18.sp , color = MaterialTheme.colors.onPrimary)
-            }
-        }
-
+        },
+    ) {
     }
 }

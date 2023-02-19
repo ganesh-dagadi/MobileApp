@@ -50,7 +50,8 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Routes.DASHBOARD){
                             DashboardScreen(
-                                onNavigate = {navController.navigate(Routes.LOGIN)},
+                                onNavigate = {
+                                    navController.navigate(it)},
                                 context = context
                             )
                         }
