@@ -66,7 +66,7 @@ class LoginViewModel(context : Context) : ViewModel() {
                 triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
                 return false
             }catch(e:HttpException){
-                triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
+                triggerEvents(UIevents.ShowErrorSnackBar("Something went wrong. Please try again later"))
                 return false
             }
             if(response.code() == 200 && response.body()!= null){

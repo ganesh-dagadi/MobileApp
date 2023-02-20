@@ -22,21 +22,30 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.components.SearchBar
 import com.example.linkedlearning.data.api.ApiCore
 import com.example.linkedlearning.data.api.auth.AuthAPI
 import com.example.linkedlearning.data.authData.AuthRepo
+import com.example.linkedlearning.views.auth.login.LoginViewModel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
+class DashboardScreenViewModelFactory(private val context: Context) :
+    ViewModelProvider.NewInstanceFactory() {
+    override fun <T : ViewModel> create(modelClass: Class<T>): T = DashBoardViewModel(context) as T
+}
 @Composable
 fun DashboardScreen(
     onNavigate : (to:String)->Unit,
     context: Context
 ){
-    val coroutineScope = rememberCoroutineScope()
-    val repoInstance = AuthRepo(context)
-    val retrofitInstance = ApiCore(context).getInstance().create(AuthAPI::class.java)
-
+    val viewModel:DashBoardViewModel = viewModel(factory = DashboardScreenViewModelFactory(context))
+    runBlocking { viewModel.getAllCourses() }
+    val courses = viewModel.coursesList.value.toString()
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         bottomBar = {
@@ -54,16 +63,25 @@ fun DashboardScreen(
                         Text("Courses" , style = TextStyle(color = Color.White))
                     }
                     Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Person, contentDescription = "Article icon" , tint = Color.White)
+                        Icon(Icons.Filled.Person, contentDescription = "Person Icon" , tint = Color.White)
                         Text("Profile" , style = TextStyle(color = Color.White))
                     }
                     Column(Modifier.clickable { onNavigate(Routes.SIGNUP) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Logout ,  contentDescription = "Article icon" , tint = Color.White)
+                        Icon(Icons.Filled.Logout ,  contentDescription = "Logout Icon" , tint = Color.White)
                         Text("Logout" ,style = TextStyle(color = Color.White))
                     }
                 }
             }
         },
     ) {
+        Column() {
+            Row(horizontalArrangement = Arrangement.Center){
+                SearchBar(
+                    enteredText = {
+                        Log.i("UIEvent" ,it)
+                    }
+                )
+            }
+        }
     }
 }
