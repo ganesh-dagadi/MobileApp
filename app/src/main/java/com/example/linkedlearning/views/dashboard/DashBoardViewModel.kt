@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.linkedlearning.data.api.ApiCore
 import com.example.linkedlearning.data.api.auth.data.LoginRes
 import com.example.linkedlearning.data.api.course.CourseAPI
+import com.example.linkedlearning.data.api.course.data.Category
 import com.example.linkedlearning.data.api.course.data.Course
 import com.example.linkedlearning.views.UIevents
 import com.google.gson.Gson
@@ -22,6 +23,10 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
     private val _coursesList = MutableLiveData<List<Course>>()
     val coursesList: LiveData<List<Course>>
         get() = _coursesList
+
+    private val _categoriesList = MutableLiveData<List<Category>>()
+    val categoryList: LiveData<List<Category>>
+        get() = _categoriesList
 
     private val retrofitInstance = ApiCore(this.context).getInstance().create(CourseAPI::class.java)
 
@@ -52,6 +57,24 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
         triggerEvents(UIevents.ShowErrorSnackBar(errResponse.err))
         return false
     }
+        return false
+    }
+
+    suspend fun getCategories():Boolean{
+        val response = try{
+            retrofitInstance.getAllCategories()
+        }catch(e:IOException){
+            triggerEvents(UIevents.ShowErrorSnackBar("Check your internet connection and try again"))
+            return false
+        }catch(e:HttpException){
+            triggerEvents(UIevents.ShowErrorSnackBar("Something went wrong try again later"))
+            return false
+        }
+        if(response.code() == 200 && response.body() != null){
+//            Log.i("APIEvent" , response.body().toString())
+            this._categoriesList.value = response.body()!!.categories
+            return true
+        }
         return false
     }
 }
