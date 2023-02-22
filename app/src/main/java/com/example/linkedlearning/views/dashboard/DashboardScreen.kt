@@ -6,6 +6,8 @@ import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Article
@@ -25,6 +27,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.components.BannerAd
+import com.example.linkedlearning.components.CourseCard
 import com.example.linkedlearning.components.SearchBar
 import kotlinx.coroutines.runBlocking
 
@@ -70,7 +73,7 @@ fun DashboardScreen(
             }
         },
     ) {
-        Column {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             Row(horizontalArrangement = Arrangement.Center){
                 SearchBar(
                     enteredText = {
@@ -89,17 +92,29 @@ fun DashboardScreen(
             LazyRow(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
             ){
                 item{
                     Spacer(modifier = Modifier.width(4.dp))
                 }
                 items(categories!!.size) { index ->
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(categories[index].title)
-                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(categories[index].title , modifier = Modifier
+                        .background(
+                            Color.LightGray, shape = RoundedCornerShape(
+                                CornerSize(5.dp)
+                            )
+                        )
+                        .padding(start = 5.dp, end = 5.dp))
+                    Spacer(modifier = Modifier.width(3.dp))
                 }
             }
+            Spacer(modifier = Modifier.height(15.dp))
+            Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+            Spacer(modifier = Modifier.height(10.dp))
+            Text("Currently Learning" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
+
+            CourseCard()
+            Spacer(modifier = Modifier.height(100.dp))
         }
     }
 }

@@ -10,6 +10,7 @@ import com.google.gson.Gson
 import com.google.gson.JsonSyntaxException
 import kotlinx.coroutines.runBlocking
 import okhttp3.*
+import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import java.io.IOException
 import java.nio.file.attribute.AclEntry.newBuilder
 
@@ -26,10 +27,10 @@ class AuthInterceptor(context: Context) : Interceptor {
 
             var response = chain.proceed(newRequest)
 
-            if (response.code() == 401 && response.body() != null) {
+            if (response.code == 401 && response.body != null) {
                 //refresh the token
                 val refreshToken ="Bearer "+runBlocking{repoInstance.getRefreshToken()}
-                val mediaType = MediaType.parse("application/json")
+                val mediaType = "application/json".toMediaTypeOrNull()
                 val requestBody = RequestBody.create(mediaType, "{\"key\":\"value\"}")
                 val refreshRequest = Request.Builder().url("https://api-linkedlearning.onrender.com/auth/newtoken")
                     .addHeader("Authorization" , refreshToken)
@@ -38,8 +39,8 @@ class AuthInterceptor(context: Context) : Interceptor {
                 val refreshClient = OkHttpClient()
                 val refreshResponse = runBlocking { refreshClient.newCall(refreshRequest).execute()}
                 if(refreshResponse.isSuccessful){
-                    val responseBodyString = refreshResponse.body()!!.string()
-                    response.body()!!.close()
+                    val responseBodyString = refreshResponse.body!!.string()
+                    response.body!!.close()
                     val newAccessToken = responseBodyString.substring(10 , responseBodyString.length - 2)
                     runBlocking { repoInstance.setAccessToken(newAccessToken)}
                     val bearerToken = "Bearer " + runBlocking { repoInstance.getAccessToken() }
