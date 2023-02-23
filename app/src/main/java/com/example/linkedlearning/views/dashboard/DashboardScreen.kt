@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Article
@@ -19,7 +20,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.ViewModel
@@ -113,8 +116,24 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(10.dp))
             Text("Currently Learning" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
 
-            CourseCard()
-            Spacer(modifier = Modifier.height(100.dp))
+            Spacer(modifier = Modifier.height(30.dp))
+            if(courses!!.isNotEmpty()){
+
+            }
+            CourseCard(courses[0])
+            Spacer(modifier = Modifier.height(30.dp))
+            CourseCard(courses[1])
+            Spacer(modifier = Modifier.height(30.dp))
+            Row(horizontalArrangement = Arrangement.Center , modifier = Modifier.fillMaxWidth()){
+                ClickableText(text = AnnotatedString(text = "View all") , onClick = {})
+            }
+            Spacer(modifier = Modifier.height(30.dp))
+
+            Text("Explore courses" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
+            for(i in 3..(courses.size - 1)){
+                CourseCard(courses[i])
+                Spacer(modifier = Modifier.height(30.dp))
+            }
         }
     }
 }
