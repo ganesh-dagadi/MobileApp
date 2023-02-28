@@ -9,8 +9,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 class ApiCore(context: Context) {
     var httpClient = OkHttpClient.Builder()
         .addInterceptor(AuthInterceptor(context))
-      private val baseUrl = "https://api-linkedlearning.onrender.com/"
-//        private val baseUrl = "https://908a-2405-201-d004-104b-5a28-e348-329a-3a36.in.ngrok.io/"
+//      private val baseUrl = "https://api-linkedlearning.onrender.com/"
+        private val baseUrl = "https://6821-2405-201-d004-104b-391c-554b-d5e4-5810.in.ngrok.io/"
     val retrofit = Retrofit.Builder()
         .baseUrl(baseUrl) //
         .addConverterFactory(GsonConverterFactory.create())

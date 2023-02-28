@@ -44,7 +44,7 @@ fun DashboardScreen(
     context: Context
 ){
     val viewModel:DashBoardViewModel = viewModel(factory = DashboardScreenViewModelFactory(context))
-    runBlocking { viewModel.getAllCourses() ; viewModel.getCategories()}
+    runBlocking { Log.i("APIEvent" , "Calling dash");viewModel.getAllCourses() ; viewModel.getCategories()}
     val courses = viewModel.coursesList.value
     val categories = viewModel.categoryList.value
     Log.i("APIEvent" , categories.toString())
@@ -120,9 +120,13 @@ fun DashboardScreen(
             if(courses!!.isNotEmpty()){
 
             }
-            CourseCard(courses[0])
+            CourseCard(courses[0] , onCardClick = {
+
+            })
             Spacer(modifier = Modifier.height(30.dp))
-            CourseCard(courses[1])
+            CourseCard(courses[1], onCardClick = {
+
+            })
             Spacer(modifier = Modifier.height(30.dp))
             Row(horizontalArrangement = Arrangement.Center , modifier = Modifier.fillMaxWidth()){
                 ClickableText(text = AnnotatedString(text = "View all") , onClick = {})
@@ -131,7 +135,12 @@ fun DashboardScreen(
 
             Text("Explore courses" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
             for(i in 3..(courses.size - 1)){
-                CourseCard(courses[i])
+                CourseCard(courses[i] , onCardClick = {
+                    runBlocking {
+                        viewModel.setSelectedCourseId(courses[i]._id)
+                    }
+                    onNavigate(Routes.COURSEDETAILS)
+                })
                 Spacer(modifier = Modifier.height(30.dp))
             }
         }

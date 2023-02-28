@@ -20,6 +20,7 @@ import com.example.linkedlearning.views.auth.OTPverify.OTPScreen
 import com.example.linkedlearning.views.dashboard.DashboardScreen
 import com.example.linkedlearning.views.auth.login.LoginScreen
 import com.example.linkedlearning.views.auth.signup.SignupScreen
+import com.example.linkedlearning.views.courseShow.courseDetails.CourseDetailsScreen
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -82,6 +83,11 @@ class MainActivity : ComponentActivity() {
                                     }
                                 }
                             )
+                        }
+                        composable(Routes.COURSEDETAILS){
+                            CourseDetailsScreen(onNavigate = {
+                            }, context = context)
+
                         }
                     }
                 }

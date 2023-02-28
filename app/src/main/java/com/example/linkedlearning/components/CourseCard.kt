@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -39,13 +40,15 @@ fun dpToPx(dp: Dp): Int {
 }
 @Composable
 fun CourseCard(
-    courseDetail:Course
+    courseDetail:Course,
+    onCardClick:()->Unit
 ){
     Column (
         modifier = Modifier
             .padding(start=40.dp , end = 40.dp)
             .height(300.dp)
             .fillMaxWidth()
+            .clickable { onCardClick() }
             .background(Color(240, 240, 250), shape = RoundedCornerShape(10.dp)),
         horizontalAlignment = Alignment.CenterHorizontally
     ){

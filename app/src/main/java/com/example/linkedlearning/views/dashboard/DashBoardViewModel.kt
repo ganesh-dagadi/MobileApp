@@ -11,6 +11,7 @@ import com.example.linkedlearning.data.api.auth.data.LoginRes
 import com.example.linkedlearning.data.api.course.CourseAPI
 import com.example.linkedlearning.data.api.course.data.Category
 import com.example.linkedlearning.data.api.course.data.Course
+import com.example.linkedlearning.data.courseData.CourseRepo
 import com.example.linkedlearning.views.UIevents
 import com.google.gson.Gson
 import kotlinx.coroutines.channels.Channel
@@ -20,10 +21,10 @@ import retrofit2.HttpException
 import java.io.IOException
 
 class DashBoardViewModel(private val context:Context): ViewModel() {
+    private val repoInstance = CourseRepo(context)
     private val _coursesList = MutableLiveData<List<Course>>()
     val coursesList: LiveData<List<Course>>
         get() = _coursesList
-
     private val _categoriesList = MutableLiveData<List<Category>>()
     val categoryList: LiveData<List<Category>>
         get() = _categoriesList
@@ -76,4 +77,9 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
         }
         return false
     }
+
+    suspend fun setSelectedCourseId(_id:String){
+        repoInstance.setSelectedCourseId(_id)
+    }
+
 }

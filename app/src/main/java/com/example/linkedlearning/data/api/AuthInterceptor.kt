@@ -20,6 +20,7 @@ class AuthInterceptor(context: Context) : Interceptor {
 //    val retrofitInstance = ApiCore(context).getInstance().create(AuthAPI::class.java)
     override fun intercept(chain: Interceptor.Chain): Response {
         val request:Request = chain.request()
+        Log.i("APIEvent" , request.toString())
             val bearerToken = "Bearer " + runBlocking { repoInstance.getAccessToken() }
             var newRequest: Request = request.newBuilder()
                 .header("Authorization", bearerToken)
