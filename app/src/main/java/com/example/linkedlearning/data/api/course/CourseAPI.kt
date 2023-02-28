@@ -1,6 +1,5 @@
 package com.example.linkedlearning.data.api.course
 
-import com.example.linkedlearning.data.api.course.WILLDEL.getOneCOurseResponse
 import com.example.linkedlearning.data.api.course.data.Course
 import com.example.linkedlearning.data.api.course.data.getCategoryRes
 import com.example.linkedlearning.data.api.course.data.getCoursesRes

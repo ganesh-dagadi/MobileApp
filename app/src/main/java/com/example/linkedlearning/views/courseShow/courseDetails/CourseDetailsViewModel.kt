@@ -26,12 +26,18 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
     val courseData : LiveData<Course>
     get() = _courseData
 
+    private val _currentView = MutableLiveData<String>("SYLLABUS")
+    val currentView : LiveData<String>
+    get() = _currentView
+
     private val retrofitInstance = ApiCore(this.context).getInstance().create(CourseAPI::class.java)
 
     private val eventChannel = Channel<UIevents>()
 
     // Receiving channel as a flow
     val eventFlow = eventChannel.receiveAsFlow()
+
+
     fun triggerEvents(event: UIevents) = viewModelScope.launch {
         eventChannel.send(event)
     }
@@ -50,12 +56,16 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
         }
         Log.i("APIEvent" , response.body()!!.toString())
         if(response.code() == 200 && response.body() != null){
-//            this._courseData.value = response.body()!!.foundCourse
+            this._courseData.value = response.body()!!.foundCourse
         }else if(response.errorBody() != null){
             val errResponse = Gson().fromJson(response.errorBody()!!.string() , LoginRes::class.java)
             triggerEvents(UIevents.ShowErrorSnackBar(errResponse.err))
             return false
         }
         return false
+    }
+
+    fun setCurrentViewModel(to:String):Unit{
+        this._currentView.value = to
     }
 }
