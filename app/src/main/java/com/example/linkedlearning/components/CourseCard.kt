@@ -60,8 +60,7 @@ fun CourseCard(
         screenWidthPx -= dpToPx(dp = 80.dp)
         val heightImgPx= dpToPx(150.dp)
         val newImageString = courseDetail.image.substring(0, 49)+ "/w_$screenWidthPx,h_$heightImgPx,c_scale" + courseDetail.image.substring(49)
-
-            Box(
+        Box(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(150.dp)

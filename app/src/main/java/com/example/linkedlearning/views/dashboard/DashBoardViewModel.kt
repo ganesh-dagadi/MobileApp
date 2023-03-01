@@ -50,6 +50,7 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
             return false
         }
         if(response.code() == 200 && response.body() != null){
+
             this._coursesList.value = response.body()!!.courses;
 
         }else if(response.errorBody() != null){

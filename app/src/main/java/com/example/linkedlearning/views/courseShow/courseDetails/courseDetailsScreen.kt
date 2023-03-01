@@ -29,6 +29,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.components.LectureCard
 import com.example.linkedlearning.data.api.course.data.Syllabu
 import com.example.linkedlearning.views.dashboard.DashBoardViewModel
 import com.example.linkedlearning.views.dashboard.DashboardScreenViewModelFactory
@@ -156,12 +157,23 @@ fun CourseDetailsScreen(
                 for (i in 0..(syllabusCopy.size - 1)){
                     Text(syllabusCopy[i].title , style = TextStyle(fontSize = 25.sp) , modifier = Modifier.padding(20.dp))
                     var topics = syllabusCopy[i].subTopics.split(",")
+                    Log.i("UIEvent" , topics.toString())
                     for(j in 0..(topics.size - 1)){
-                        Text(topics[i] , modifier = Modifier.padding(10.dp))
+                        Text(topics[j] , modifier = Modifier.padding(10.dp))
                     }
                 }
             }else{
-                Text("HI")
+                Spacer(modifier = Modifier.height(20.dp))
+                Column(modifier = Modifier.fillMaxWidth().padding(start = 10.dp) , horizontalAlignment = Alignment.CenterHorizontally){
+                    for(i in 0..(courseData.content.size - 1)){
+                        Text(courseData.content[i].title , fontSize = 22.sp)
+                        for(j in 0..(courseData.content[i].secContent.size - 1)){
+                            Spacer(modifier = Modifier.height(10.dp))
+                            LectureCard(courseData.content[i].secContent[j])
+                            Spacer(modifier = Modifier.height(10.dp))
+                        }
+                    }
+                }
             }
         }
 

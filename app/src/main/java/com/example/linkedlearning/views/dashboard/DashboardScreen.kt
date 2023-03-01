@@ -47,7 +47,7 @@ fun DashboardScreen(
     runBlocking { Log.i("APIEvent" , "Calling dash");viewModel.getAllCourses() ; viewModel.getCategories()}
     val courses = viewModel.coursesList.value
     val categories = viewModel.categoryList.value
-    Log.i("APIEvent" , categories.toString())
+
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         bottomBar = {
