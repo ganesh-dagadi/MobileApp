@@ -68,4 +68,27 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
     fun setCurrentViewModel(to:String):Unit{
         this._currentView.value = to
     }
+
+    suspend fun enrollIntoCourse(_id:String):Boolean{
+        val response = try{
+            retrofitInstance.enrollIntoCourse(_id)
+        }catch(e:IOException){
+            triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
+            return false
+        }catch(e:HttpException){
+            triggerEvents(UIevents.ShowErrorSnackBar(msg = "Something went wrong. Please try again later"))
+            return false
+        }
+        if(response.code() == 200 && response.body() != null){
+            Log.i("APIEvent" , "Enrolled")
+            return true
+        }else if(response.errorBody() != null){
+            Log.i("APIEvent" , "Not enrolled")
+            val errResponse = Gson().fromJson(response.errorBody()!!.string() , LoginRes::class.java)
+            triggerEvents(UIevents.ShowErrorSnackBar(errResponse.err))
+            return false
+        }
+        return false
+
+    }
 }

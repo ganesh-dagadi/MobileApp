@@ -4,7 +4,7 @@ data class Course(
     val EnrollmentCount: Int,
     val __v: Int,
     val _id: String,
-    val categoryId: String,
+    val categoryId: Category,
     val content: List<Content>,
     val createdAt: String,
     val descp: String,

@@ -13,6 +13,9 @@ import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -29,6 +32,8 @@ import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.data.api.course.data.Syllabu
 import com.example.linkedlearning.views.dashboard.DashBoardViewModel
 import com.example.linkedlearning.views.dashboard.DashboardScreenViewModelFactory
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class CourseDetailsViewModelFactory(private val context: Context) :
@@ -39,6 +44,7 @@ class CourseDetailsViewModelFactory(private val context: Context) :
 @Composable
 fun CourseDetailsScreen(
     onNavigate :(to:String)->Unit,
+    showSnackBar:(to:String)->Unit,
     context: Context
 ){
     val viewModel:CourseDetailsViewModel = viewModel(factory = CourseDetailsViewModelFactory(context))
@@ -46,8 +52,8 @@ fun CourseDetailsScreen(
        viewModel.getCourseData()
     }
     val courseData = viewModel.courseData.value!!
-    val currentView = viewModel.currentView.value!!
-
+    val currentView by viewModel.currentView.observeAsState();
+    val coroutineScope = rememberCoroutineScope()
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         bottomBar = {
@@ -115,7 +121,16 @@ fun CourseDetailsScreen(
             }
 
             Button(onClick =
-            { /*TODO*/ },
+            {
+                coroutineScope.launch {
+                    if(viewModel.enrollIntoCourse(courseData._id)){
+                        showSnackBar("Enrolled")
+                    }else{
+                        showSnackBar("You are already enrolled")
+                    }
+
+                }
+            },
                 colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
                 modifier = Modifier.padding(25.dp)
             ) {
@@ -133,7 +148,9 @@ fun CourseDetailsScreen(
                     viewModel.setCurrentViewModel("LECTURES")} )
             }
 
-            if(viewModel.currentView.value == "SYLLABUS"){
+            Log.i("UIEvent" , viewModel.currentView.value!!)
+
+            if(currentView == "SYLLABUS"){
                 Log.i("UIEvent" , "Reached in here")
                 val syllabusCopy:List<Syllabu> = courseData.syllabus
                 for (i in 0..(syllabusCopy.size - 1)){

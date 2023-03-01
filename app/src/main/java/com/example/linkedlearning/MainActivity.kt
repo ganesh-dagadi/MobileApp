@@ -86,7 +86,13 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Routes.COURSEDETAILS){
                             CourseDetailsScreen(onNavigate = {
-                            }, context = context)
+                            }, context = context ,
+                                showSnackBar = {
+                                    GlobalScope.launch {
+                                        scaffoldState.snackbarHostState.showSnackbar(it)
+                                    }
+                                }
+                            )
 
                         }
                     }
