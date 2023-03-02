@@ -18,4 +18,7 @@ interface CourseAPI {
 
     @PATCH("/course/{course_id}/enroll")
     suspend fun enrollIntoCourse(@Path(value = "course_id", encoded = true)course_id:String):Response<NormalMsg>
+
+    @GET("/course/enrolled")
+    suspend fun getEnrolledCourses():Response<getEnrollCoursesRes>
 }

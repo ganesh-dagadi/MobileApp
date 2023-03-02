@@ -6,4 +6,5 @@ object Routes {
     const val SIGNUP = "signup"
     const val OTPVERIFY = "otpVerify"
     const val COURSEDETAILS = "courseDetails"
+    const val ENROLLEDCOURSES = "enrolledCourses"
 }

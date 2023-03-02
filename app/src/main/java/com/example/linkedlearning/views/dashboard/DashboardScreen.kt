@@ -44,10 +44,10 @@ fun DashboardScreen(
     context: Context
 ){
     val viewModel:DashBoardViewModel = viewModel(factory = DashboardScreenViewModelFactory(context))
-    runBlocking { Log.i("APIEvent" , "Calling dash");viewModel.getAllCourses() ; viewModel.getCategories()}
+    runBlocking {viewModel.getAllCourses() ; viewModel.getEnrolledCourses(); viewModel.getCategories()}
     val courses = viewModel.coursesList.value
     val categories = viewModel.categoryList.value
-
+    val enrolledCourses = viewModel.enrolledCoursesList.value
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         bottomBar = {
@@ -120,16 +120,24 @@ fun DashboardScreen(
             if(courses!!.isNotEmpty()){
 
             }
-            CourseCard(courses[0] , onCardClick = {
-
+            CourseCard(enrolledCourses!![0] , onCardClick = {
+                runBlocking {
+                    viewModel.setSelectedCourseId(enrolledCourses[0]._id)
+                }
+                onNavigate(Routes.COURSEDETAILS)
             })
             Spacer(modifier = Modifier.height(30.dp))
-            CourseCard(courses[1], onCardClick = {
-
+            CourseCard(enrolledCourses!![1], onCardClick = {
+                runBlocking {
+                    viewModel.setSelectedCourseId(enrolledCourses[1]._id)
+                }
+                onNavigate(Routes.COURSEDETAILS)
             })
             Spacer(modifier = Modifier.height(30.dp))
             Row(horizontalArrangement = Arrangement.Center , modifier = Modifier.fillMaxWidth()){
-                ClickableText(text = AnnotatedString(text = "View all") , onClick = {})
+                ClickableText(text = AnnotatedString(text = "View all") , onClick = {
+                    onNavigate(Routes.ENROLLEDCOURSES)
+                })
             }
             Spacer(modifier = Modifier.height(30.dp))
 
