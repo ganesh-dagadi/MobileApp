@@ -15,6 +15,8 @@ import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -32,6 +34,7 @@ import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.components.BannerAd
 import com.example.linkedlearning.components.CourseCard
 import com.example.linkedlearning.components.SearchBar
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
 class DashboardScreenViewModelFactory(private val context: Context) :
@@ -45,7 +48,8 @@ fun DashboardScreen(
 ){
     val viewModel:DashBoardViewModel = viewModel(factory = DashboardScreenViewModelFactory(context))
     runBlocking {viewModel.getAllCourses() ; viewModel.getEnrolledCourses(); viewModel.getCategories()}
-    val courses = viewModel.coursesList.value
+    val coroutineScope = rememberCoroutineScope()
+    val courses by viewModel.coursesList.observeAsState()
     val categories = viewModel.categoryList.value
     val enrolledCourses = viewModel.enrolledCoursesList.value
     Scaffold(
@@ -101,13 +105,17 @@ fun DashboardScreen(
                 }
                 items(categories!!.size) { index ->
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(categories[index].title , modifier = Modifier
+                    ClickableText(text = AnnotatedString(text = categories[index].title) ,modifier = Modifier
                         .background(
                             Color.LightGray, shape = RoundedCornerShape(
                                 CornerSize(5.dp)
                             )
                         )
-                        .padding(start = 5.dp, end = 5.dp))
+                        .padding(start = 5.dp, end = 5.dp), onClick = {
+                        coroutineScope.launch {
+                            viewModel.getCoursesByCategory(categories[index]._id)
+                        }
+                    })
                     Spacer(modifier = Modifier.width(3.dp))
                 }
             }
@@ -142,10 +150,10 @@ fun DashboardScreen(
             Spacer(modifier = Modifier.height(30.dp))
 
             Text("Explore courses" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
-            for(i in 3..(courses.size - 1)){
-                CourseCard(courses[i] , onCardClick = {
+            for(i in 0..(courses!!.size - 1)){
+                CourseCard(courses!![i] , onCardClick = {
                     runBlocking {
-                        viewModel.setSelectedCourseId(courses[i]._id)
+                        viewModel.setSelectedCourseId(courses!![i]._id)
                     }
                     onNavigate(Routes.COURSEDETAILS)
                 })
