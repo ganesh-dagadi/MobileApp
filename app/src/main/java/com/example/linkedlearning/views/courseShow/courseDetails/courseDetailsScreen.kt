@@ -1,6 +1,8 @@
 package com.example.linkedlearning.views.courseShow.courseDetails
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
@@ -31,11 +33,9 @@ import coil.compose.rememberImagePainter
 import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.components.LectureCard
 import com.example.linkedlearning.data.api.course.data.Syllabu
-import com.example.linkedlearning.views.dashboard.DashBoardViewModel
-import com.example.linkedlearning.views.dashboard.DashboardScreenViewModelFactory
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+
 
 class CourseDetailsViewModelFactory(private val context: Context) :
     ViewModelProvider.NewInstanceFactory() {
@@ -164,12 +164,20 @@ fun CourseDetailsScreen(
                 }
             }else{
                 Spacer(modifier = Modifier.height(20.dp))
-                Column(modifier = Modifier.fillMaxWidth().padding(start = 10.dp) , horizontalAlignment = Alignment.CenterHorizontally){
+                Column(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 10.dp) , horizontalAlignment = Alignment.CenterHorizontally){
                     for(i in 0..(courseData.content.size - 1)){
                         Text(courseData.content[i].title , fontSize = 22.sp)
                         for(j in 0..(courseData.content[i].secContent.size - 1)){
                             Spacer(modifier = Modifier.height(10.dp))
-                            LectureCard(courseData.content[i].secContent[j])
+                            LectureCard(courseData.content[i].secContent[j] , onClick = {
+                                val webIntent = Intent(
+                                    Intent.ACTION_VIEW,
+                                    Uri.parse(it)
+                                )
+                                context.startActivity(webIntent)
+                            })
                             Spacer(modifier = Modifier.height(10.dp))
                         }
                     }

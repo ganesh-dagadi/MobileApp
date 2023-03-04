@@ -1,5 +1,6 @@
 package com.example.linkedlearning.components
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,15 +21,16 @@ import com.example.linkedlearning.data.api.course.data.Course
 import com.example.linkedlearning.data.api.course.data.SecContent
 
 @Composable
-fun LectureCard(lectureData:SecContent){
-    Row(modifier = Modifier.fillMaxWidth()) {
+fun LectureCard(lectureData:SecContent , onClick:(link : String)->Unit){
+    Row(modifier = Modifier.fillMaxWidth().clickable {
+        onClick(lectureData.link)
+    }) {
         Spacer(modifier = Modifier.width(20.dp))
         if(lectureData.resourceType == "video"){
             Icon(imageVector = Icons.Outlined.PlayArrow, contentDescription = null, tint = Color(237, 0 , 0))
         }else{
             Icon(imageVector = Icons.Outlined.Article, contentDescription = null, tint = Color(0, 0 , 0))
         }
-
         Spacer(modifier = Modifier.width(10.dp))
         Text(lectureData.title , style = TextStyle(fontSize = 18.sp));
     }
