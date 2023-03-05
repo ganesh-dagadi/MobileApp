@@ -10,6 +10,8 @@ import com.example.linkedlearning.data.api.ApiCore
 import com.example.linkedlearning.data.api.auth.data.LoginRes
 import com.example.linkedlearning.data.api.course.CourseAPI
 import com.example.linkedlearning.data.api.course.data.Course
+import com.example.linkedlearning.data.api.course.data.DiscussionQuestions
+import com.example.linkedlearning.data.api.course.data.Question
 import com.example.linkedlearning.data.courseData.CourseRepo
 import com.example.linkedlearning.views.UIevents
 import com.google.gson.Gson
@@ -29,6 +31,10 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
     private val _currentView = MutableLiveData<String>("SYLLABUS")
     val currentView : LiveData<String>
     get() = _currentView
+
+    private val _questions = MutableLiveData<List<Question>>()
+    val questions : LiveData<List<Question>>
+    get() = _questions
 
     private val retrofitInstance = ApiCore(this.context).getInstance().create(CourseAPI::class.java)
 
@@ -90,5 +96,23 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
         }
         return false
 
+    }
+
+    suspend fun getQuestions():Boolean{
+        val courseId = repoInstance.getSelectedCourseId()
+        val response = try{
+            retrofitInstance.getAllQuestions(courseId!!)
+        }catch(e:IOException){
+            triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
+            return false
+        }catch(e:HttpException){
+            triggerEvents(UIevents.ShowErrorSnackBar(msg = "Something went wrong. Please try again later"))
+            return false
+        }
+        if(response.code() == 200 && response.body() != null){
+            this._questions.value = response.body()!!.questions
+            return true
+        }
+        return false
     }
 }

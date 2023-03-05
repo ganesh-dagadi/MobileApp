@@ -147,6 +147,10 @@ fun CourseDetailsScreen(
                 ClickableText(text = AnnotatedString("Lectures"), onClick ={
                     Log.i("UIEvent" , "Clicked")
                     viewModel.setCurrentViewModel("LECTURES")} )
+                Spacer(modifier = Modifier.width(20.dp))
+                ClickableText(text = AnnotatedString("Discussion"), onClick ={
+                    Log.i("UIEvent" , "Clicked")
+                    viewModel.setCurrentViewModel("DISCUSSION")} )
             }
 
             Log.i("UIEvent" , viewModel.currentView.value!!)
@@ -162,7 +166,7 @@ fun CourseDetailsScreen(
                         Text(topics[j] , modifier = Modifier.padding(10.dp))
                     }
                 }
-            }else{
+            }else if (currentView == "LECTURES"){
                 Spacer(modifier = Modifier.height(20.dp))
                 Column(modifier = Modifier
                     .fillMaxWidth()
@@ -181,6 +185,38 @@ fun CourseDetailsScreen(
                             Spacer(modifier = Modifier.height(10.dp))
                         }
                     }
+                }
+            }else{
+                Column(modifier = Modifier.fillMaxWidth()) {
+                    runBlocking { viewModel.getQuestions() }
+                    val questions = viewModel.questions;
+                    Log.i("APIEvent" , questions.value.toString())
+                    Row(horizontalArrangement = Arrangement.End){
+                        Button(onClick =
+                        {
+                            onNavigate(Routes.NEWQUESTION)
+                        },
+                            colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
+                            modifier = Modifier.padding(25.dp)
+                        ) {
+                            Text("Ask a question" , modifier = Modifier.padding(top = 1.dp , bottom = 1.dp , start = 1.dp , end = 1.dp), fontSize = 12.sp , color = MaterialTheme.colors.onPrimary)
+                        }
+                    }
+
+                    Log.i("APIEvent" , questions.value.toString())
+                    for(i in 0..(questions.value!!.size - 1)){
+                        Column(modifier = Modifier.fillMaxWidth().padding(25.dp).clickable {
+
+                        }){
+                            Log.i("APIEvent" , questions.value.toString())
+                            Text(questions.value!![i].title , style= TextStyle(fontSize = 25.sp))
+
+                            if(questions.value!![i].descp != null){
+                                Text(questions.value!![i].descp!!)
+                            }
+                        }
+                    }
+
                 }
             }
         }

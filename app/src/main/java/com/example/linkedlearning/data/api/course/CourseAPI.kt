@@ -2,10 +2,7 @@ package com.example.linkedlearning.data.api.course
 
 import com.example.linkedlearning.data.api.course.data.*
 import retrofit2.Response
-import retrofit2.http.GET
-import retrofit2.http.PATCH
-import retrofit2.http.Path
-import retrofit2.http.Query
+import retrofit2.http.*
 
 interface CourseAPI {
     @GET("/course/")
@@ -25,4 +22,10 @@ interface CourseAPI {
 
     @GET("/course/bycat")
     suspend fun getCoursesByCategory(@Query("categoryId") category_id:String):Response<getCoursesRes>
+
+    @POST("/course/{course_id}/question")
+    suspend fun createQuestion(@Body questionData:QuestionReq , @Path(value = "course_id", encoded = true)course_id: String):Response<NormalMsg>
+
+    @GET("/course/{course_id}/question")
+    suspend fun getAllQuestions(@Path(value = "course_id", encoded = true)course_id: String):Response<DiscussionQuestions>
 }
