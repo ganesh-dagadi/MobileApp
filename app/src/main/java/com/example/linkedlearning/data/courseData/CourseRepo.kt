@@ -16,4 +16,15 @@ class CourseRepo(context:Context):CourseRepoIntr {
     override suspend fun getSelectedCourseId(): String? {
         return sf.getString("courseId", null)
     }
+
+    override suspend fun setSelectedLectureId(_id: String) {
+        with(sf.edit()){
+            putString("lectureId" , _id)
+            apply()
+        }
+    }
+
+    override suspend fun getSelectedLectureId(): String? {
+        return sf.getString("lectureId", null)
+    }
 }

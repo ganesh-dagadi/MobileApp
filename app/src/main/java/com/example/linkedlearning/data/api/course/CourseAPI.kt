@@ -28,4 +28,10 @@ interface CourseAPI {
 
     @GET("/course/{course_id}/question")
     suspend fun getAllQuestions(@Path(value = "course_id", encoded = true)course_id: String):Response<DiscussionQuestions>
+
+    @GET("/course/{course_id}/question/{lecture_id}")
+    suspend fun getQuestionById(@Path(value = "course_id", encoded = true)course_id: String , @Path(value = "lecture_id", encoded = true)lecture_id: String):Response<getOneQuesRes>
+
+    @POST("/course/{course_id}/question/{lecture_id}/answer")
+    suspend fun createAnswer(@Path(value = "course_id", encoded = true)course_id: String? , @Path(value = "lecture_id", encoded = true)lecture_id: String? , @Body answerReqData: AnswerReqData):Response<NormalMsg>
 }

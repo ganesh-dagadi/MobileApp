@@ -206,7 +206,10 @@ fun CourseDetailsScreen(
                     Log.i("APIEvent" , questions.value.toString())
                     for(i in 0..(questions.value!!.size - 1)){
                         Column(modifier = Modifier.fillMaxWidth().padding(25.dp).clickable {
-
+                            coroutineScope.launch {
+                                viewModel.setLectureId(questions.value!![i]._id)
+                                onNavigate(Routes.SHOWQUESTION)
+                            }
                         }){
                             Log.i("APIEvent" , questions.value.toString())
                             Text(questions.value!![i].title , style= TextStyle(fontSize = 25.sp))
@@ -220,8 +223,5 @@ fun CourseDetailsScreen(
                 }
             }
         }
-
-
-        
     }
 }

@@ -22,6 +22,7 @@ import com.example.linkedlearning.views.auth.login.LoginScreen
 import com.example.linkedlearning.views.auth.signup.SignupScreen
 import com.example.linkedlearning.views.courseShow.EnrolledCourses.EnrolledCoursesScreen
 import com.example.linkedlearning.views.courseShow.NewQuestion.NewQuestionScreen
+import com.example.linkedlearning.views.courseShow.QuestionShow.QuestionShowScreen
 import com.example.linkedlearning.views.courseShow.courseDetails.CourseDetailsScreen
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -105,6 +106,16 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(Routes.NEWQUESTION){
                             NewQuestionScreen(onNavigate = {
+                                navController.navigate(it)
+                            }, context = context,showSnackBar = {
+                                GlobalScope.launch {
+                                    scaffoldState.snackbarHostState.showSnackbar(it)
+                                }
+                            }
+                            )
+                        }
+                        composable(Routes.SHOWQUESTION){
+                            QuestionShowScreen(onNavigate = {
                                 navController.navigate(it)
                             }, context = context,showSnackBar = {
                                 GlobalScope.launch {

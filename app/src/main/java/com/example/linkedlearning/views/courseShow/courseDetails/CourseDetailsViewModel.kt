@@ -115,4 +115,8 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
         }
         return false
     }
+
+    suspend fun setLectureId(_id: String):Unit{
+        repoInstance.setSelectedLectureId(_id)
+    }
 }
