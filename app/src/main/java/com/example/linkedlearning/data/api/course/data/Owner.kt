@@ -7,5 +7,6 @@ data class Owner(
     val isActive: Boolean,
     val isAdmin: Boolean,
     val isVerified: Boolean,
-    val username: String
+    val username: String,
+    val image : String
 )

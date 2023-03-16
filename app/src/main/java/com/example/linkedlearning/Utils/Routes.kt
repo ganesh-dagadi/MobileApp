@@ -9,4 +9,5 @@ object Routes {
     const val ENROLLEDCOURSES = "enrolledCourses"
     const val NEWQUESTION = "newQuestion"
     const val SHOWQUESTION = "showQuestion"
+    const val USERPROFILE = "UserProfile"
 }

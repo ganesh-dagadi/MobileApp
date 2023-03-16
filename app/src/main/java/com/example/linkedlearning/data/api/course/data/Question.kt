@@ -5,6 +5,6 @@ data class Question(
     val _id: String,
     val answers: List<Answer>,
     val descp: String?,
-    val owner: String,
+    val owner: Owner,
     val title: String
 )

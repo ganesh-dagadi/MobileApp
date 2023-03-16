@@ -16,6 +16,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.ui.theme.LinkedLearningTheme
+import com.example.linkedlearning.views.User.ProfileView.ProfileScreen
 import com.example.linkedlearning.views.auth.OTPverify.OTPScreen
 import com.example.linkedlearning.views.dashboard.DashboardScreen
 import com.example.linkedlearning.views.auth.login.LoginScreen
@@ -122,6 +123,12 @@ class MainActivity : ComponentActivity() {
                                     scaffoldState.snackbarHostState.showSnackbar(it)
                                 }
                             }
+                            )
+                        }
+                        composable(Routes.USERPROFILE){
+                            ProfileScreen(onNavigate = {
+                                navController.navigate(it)
+                            }, context = context
                             )
                         }
                     }
