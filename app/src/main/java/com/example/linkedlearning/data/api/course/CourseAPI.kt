@@ -34,4 +34,7 @@ interface CourseAPI {
 
     @POST("/course/{course_id}/question/{lecture_id}/answer")
     suspend fun createAnswer(@Path(value = "course_id", encoded = true)course_id: String? , @Path(value = "lecture_id", encoded = true)lecture_id: String? , @Body answerReqData: AnswerReqData):Response<NormalMsg>
+
+    @GET("/course/created")
+    suspend fun getUserCreatedCourses():Response<getCoursesRes>
 }
