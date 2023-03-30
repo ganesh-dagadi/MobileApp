@@ -26,6 +26,10 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
     val coursesList: LiveData<List<Course>>
         get() = _coursesList
 
+//    private val _searchText = MutableLiveData<String>()
+//    val searchText: LiveData<String>
+//        get() = _searchText
+
     private val _enrolledCoursesList = MutableLiveData<List<Course>>()
     val enrolledCoursesList: LiveData<List<Course>>
         get() = _enrolledCoursesList
@@ -108,6 +112,25 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
     suspend fun getCoursesByCategory(_id:String):Boolean{
         val response = try{
             retrofitInstance.getCoursesByCategory(_id)
+        }catch(e:IOException){
+            triggerEvents(UIevents.ShowErrorSnackBar("Check your internet connection and try again"))
+            return false
+        }catch(e:HttpException){
+            triggerEvents(UIevents.ShowErrorSnackBar("Something went wrong try again later"))
+            return false
+        }
+        if(response.code() == 200 && response.body() != null){
+            this._coursesList.value = response.body()!!.courses;
+            Log.i("APIEvent" , "Hit")
+            Log.i("APIEvent" , this._coursesList.value.toString())
+        }
+
+        return false
+    }
+
+    suspend fun searchCourses(searchStr:String):Boolean{
+        val response = try{
+            retrofitInstance.searchCourses(searchStr);
         }catch(e:IOException){
             triggerEvents(UIevents.ShowErrorSnackBar("Check your internet connection and try again"))
             return false

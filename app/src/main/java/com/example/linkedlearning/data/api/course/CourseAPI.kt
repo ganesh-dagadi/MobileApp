@@ -37,4 +37,7 @@ interface CourseAPI {
 
     @GET("/course/created")
     suspend fun getUserCreatedCourses():Response<getCoursesRes>
+
+    @GET("course/search")
+    suspend fun searchCourses(@Query("title") title:String?):Response<getCoursesRes>
 }

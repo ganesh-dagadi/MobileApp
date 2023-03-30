@@ -84,7 +84,7 @@ fun DashboardScreen(
             Row(horizontalArrangement = Arrangement.Center){
                 SearchBar(
                     enteredText = {
-                        Log.i("UIEvent" ,it)
+                        coroutineScope.launch { viewModel.searchCourses(it); }
                     }
                 )
             }
@@ -125,25 +125,25 @@ fun DashboardScreen(
             Text("Currently Learning" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
 
             Spacer(modifier = Modifier.height(30.dp))
-            if(courses!!.isNotEmpty()){
-
-            }
-            CourseCard(enrolledCourses!![0] , onCardClick = {
-                runBlocking {
-                    viewModel.setSelectedCourseId(enrolledCourses[0]._id)
-                }
-                onNavigate(Routes.COURSEDETAILS)
-            })
-            Spacer(modifier = Modifier.height(30.dp))
-            CourseCard(enrolledCourses!![1], onCardClick = {
-                runBlocking {
-                    viewModel.setSelectedCourseId(enrolledCourses[1]._id)
-                }
-                onNavigate(Routes.COURSEDETAILS)
-            })
-            Spacer(modifier = Modifier.height(30.dp))
+//            if(courses!!.isNotEmpty()){
+//
+//            }
+//            CourseCard(enrolledCourses!![0] , onCardClick = {
+//                runBlocking {
+//                    viewModel.setSelectedCourseId(enrolledCourses[0]._id)
+//                }
+//                onNavigate(Routes.COURSEDETAILS)
+//            })
+//            Spacer(modifier = Modifier.height(30.dp))
+//            CourseCard(enrolledCourses!![1], onCardClick = {
+//                runBlocking {
+//                    viewModel.setSelectedCourseId(enrolledCourses[1]._id)
+//                }
+//                onNavigate(Routes.COURSEDETAILS)
+//            })
+//            Spacer(modifier = Modifier.height(30.dp))
             Row(horizontalArrangement = Arrangement.Center , modifier = Modifier.fillMaxWidth()){
-                ClickableText(text = AnnotatedString(text = "View all") , onClick = {
+                ClickableText(text = AnnotatedString(text = "View courses") , onClick = {
                     onNavigate(Routes.ENROLLEDCOURSES)
                 })
             }
