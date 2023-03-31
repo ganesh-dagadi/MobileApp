@@ -2,6 +2,7 @@ package com.example.linkedlearning.views.User.ProfileView
 
 import android.content.Context
 import android.util.Log
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -19,11 +20,17 @@ import java.io.IOException
 
 class ProfileViewModel(private val context: Context):ViewModel() {
 
-    var username:String = "123"
-    var email:String = "456"
-    var imageUrl:String = "321"
+    val username = MutableLiveData<String?>()
+//    var username:String = "123"
+    val email = MutableLiveData<String?>()
+    val imageUrl = MutableLiveData<String?>()
 
-    var courses:List<Course> = listOf()
+//    var courses:List<Course> = listOf()
+
+    val _courses = MutableLiveData<List<Course>>()
+    val courses: LiveData<List<Course>>
+    get() = _courses
+
 
     private val eventChannel = Channel<UIevents>()
 
@@ -49,9 +56,9 @@ class ProfileViewModel(private val context: Context):ViewModel() {
         }
         if(response.code() == 200 && response.body() != null){
             Log.i("APIEvent" , response.body().toString())
-            username = response.body()!!.userData.username
-            email = response.body()!!.userData.email
-            imageUrl = response.body()!!.userData.image
+            username.value = response.body()!!.userData.username
+            email.value = response.body()!!.userData.email
+            imageUrl.value = response.body()!!.userData.image
             return true
         }
         return false
@@ -69,7 +76,7 @@ class ProfileViewModel(private val context: Context):ViewModel() {
         }
 
         if(response.code() == 200 && response.body() != null){
-            this.courses = response.body()!!.courses
+            this._courses.value = response.body()!!.courses
             return true
         }
         return false

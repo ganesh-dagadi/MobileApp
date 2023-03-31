@@ -71,11 +71,11 @@ fun CourseDetailsScreen(
                         .padding(top = 5.dp)
 
                 ) {
-                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(Modifier.clickable { onNavigate(Routes.DASHBOARD) } , horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Filled.Article , contentDescription = "Article icon" , tint = Color.White)
-                        Text("Courses" , style = TextStyle(color = Color.White))
+                        Text("Dashboard" , style = TextStyle(color = Color.White))
                     }
-                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(Modifier.clickable { onNavigate(Routes.USERPROFILE) } , horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Filled.Person, contentDescription = "Person Icon" , tint = Color.White)
                         Text("Profile" , style = TextStyle(color = Color.White))
                     }

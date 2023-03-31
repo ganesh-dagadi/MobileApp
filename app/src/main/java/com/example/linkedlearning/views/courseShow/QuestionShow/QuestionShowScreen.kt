@@ -13,6 +13,7 @@ import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.components.BannerAd
 import com.example.linkedlearning.views.courseShow.NewQuestion.NewQuestionViewModel
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -44,9 +46,12 @@ fun QuestionShowScreen(
 
     val viewModel:QuestionShowViewModel = viewModel(factory = QuestionShowViewModelFactory(context));
     val coroutineScope = rememberCoroutineScope()
-    runBlocking {viewModel.getQuestionData()}
-    val question = viewModel.questionData.value
-    val newAns = viewModel.newAnswerText.observeAsState()
+//    runBlocking {viewModel.getQuestionData()}
+    val question = viewModel.questionData.observeAsState(null).value
+    val newAns = viewModel.newAnswerText.observeAsState(null)
+    LaunchedEffect(key1 = true){
+        viewModel.getQuestionData()
+    }
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         bottomBar = {
@@ -59,11 +64,11 @@ fun QuestionShowScreen(
                         .padding(top = 5.dp)
 
                 ) {
-                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(Modifier.clickable { onNavigate(Routes.DASHBOARD) } , horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Filled.Article , contentDescription = "Article icon" , tint = Color.White)
                         Text("Courses" , style = TextStyle(color = Color.White))
                     }
-                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(Modifier.clickable { onNavigate(Routes.USERPROFILE) } , horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Filled.Person, contentDescription = "Person Icon" , tint = Color.White)
                         Text("Profile" , style = TextStyle(color = Color.White))
                     }
@@ -78,45 +83,51 @@ fun QuestionShowScreen(
         Column(modifier = Modifier
             .padding(20.dp)
             .verticalScroll(rememberScrollState())) {
-            Text(question!!.title , style= TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(bottom = 10.dp))
-            if(question!!.descp != null){
-                Text(question!!.descp!!)
-            }
-
-            Text("Answers" , style= TextStyle(fontSize = 25.sp) , modifier = Modifier.padding(top = 10.dp))
-            for(i in 0 until question.answers.size){
-                Text(question.answers[i].answer!! , fontSize = 17.sp , modifier = Modifier.padding(top = 10.dp , bottom = 10.dp))
-                Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(end = 16.dp))
-            }
-
-            //New answer
-            OutlinedTextField(value = newAns.value.toString(), onValueChange = {
-                    newText->viewModel.setAnsText(newText)
-            },
-                label = { Text(text = "New Answer") },
-                modifier = Modifier
-                    .padding(top = 10.dp , bottom = 10.dp)
-                    .height(300.dp),
-                colors = TextFieldDefaults.outlinedTextFieldColors(
-                    focusedBorderColor = MaterialTheme.colors.secondary
-                )
-            )
-            Button(onClick = {
-                coroutineScope.launch {
-                    if(viewModel.postAnswerQuestion()){
-                        onNavigate(Routes.SHOWQUESTION)
-                    }else{
-                        showSnackBar("Something went wrong try again")
-                    }
+            if(question ==null){
+                Spacer(modifier = Modifier.height(100.dp))
+                Text("Loading")
+            }else{
+                Text(question!!.title , style= TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(bottom = 10.dp))
+                if(question!!.descp != null){
+                    Text(question!!.descp!!)
+                }
+                BannerAd(context)
+                Text("Answers" , style= TextStyle(fontSize = 25.sp) , modifier = Modifier.padding(top = 10.dp))
+                for(i in 0 until question.answers.size){
+                    Text(question.answers[i].answer!! , fontSize = 17.sp , modifier = Modifier.padding(top = 10.dp , bottom = 10.dp))
+                    Divider(color = Color.Black, thickness = 1.dp, modifier = Modifier.padding(end = 16.dp))
                 }
 
-            } ,
-                colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
-                modifier = Modifier.padding(10.dp)
-            ) {
-                Text("Submit" , modifier = Modifier.padding(top = 1.dp , bottom = 1.dp , start = 2.dp , end = 2.dp), fontSize = 18.sp , color = MaterialTheme.colors.onPrimary)
-            }
-        }
+                //New answer
+                OutlinedTextField(value = newAns.value.toString(), onValueChange = {
+                        newText->viewModel.setAnsText(newText)
+                },
+                    label = { Text(text = "New Answer") },
+                    modifier = Modifier
+                        .padding(top = 10.dp, bottom = 10.dp)
+                        .height(300.dp),
+                    colors = TextFieldDefaults.outlinedTextFieldColors(
+                        focusedBorderColor = MaterialTheme.colors.secondary
+                    )
+                )
+                Button(onClick = {
+                    coroutineScope.launch {
+                        if(viewModel.postAnswerQuestion()){
+                            onNavigate(Routes.SHOWQUESTION)
+                        }else{
+                            showSnackBar("Something went wrong try again")
+                        }
+                    }
 
-    }
+                } ,
+                    colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
+                    modifier = Modifier.padding(10.dp)
+                ) {
+                    Text("Submit" , modifier = Modifier.padding(top = 1.dp , bottom = 1.dp , start = 2.dp , end = 2.dp), fontSize = 18.sp , color = MaterialTheme.colors.onPrimary)
+                }
+            }
+
+        }
+            }
+
 }
