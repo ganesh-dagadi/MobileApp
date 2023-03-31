@@ -14,10 +14,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Article
 import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.*
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
@@ -34,6 +32,8 @@ import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.components.BannerAd
 import com.example.linkedlearning.components.CourseCard
 import com.example.linkedlearning.components.SearchBar
+import com.example.linkedlearning.data.api.course.data.Category
+import com.example.linkedlearning.data.api.course.data.Course
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
@@ -47,11 +47,13 @@ fun DashboardScreen(
     context: Context
 ){
     val viewModel:DashBoardViewModel = viewModel(factory = DashboardScreenViewModelFactory(context))
-    runBlocking {viewModel.getAllCourses() ; viewModel.getEnrolledCourses(); viewModel.getCategories()}
+    runBlocking {}
     val coroutineScope = rememberCoroutineScope()
-    val courses by viewModel.coursesList.observeAsState()
-    val categories = viewModel.categoryList.value
-    val enrolledCourses = viewModel.enrolledCoursesList.value
+    val courses by viewModel.coursesList.observeAsState(List<Course?>(10){null})
+    val categories = viewModel.categoryList.observeAsState(List<Category?>(10){null}).value
+    LaunchedEffect(key1 = true){
+        viewModel.getAllCourses(); viewModel.getCategories()
+    }
     Scaffold(
         scaffoldState = rememberScaffoldState(),
         bottomBar = {
@@ -64,9 +66,9 @@ fun DashboardScreen(
                         .padding(top = 5.dp)
 
                 ) {
-                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
+                    Column(Modifier.clickable { onNavigate(Routes.DASHBOARD) } , horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Filled.Article , contentDescription = "Article icon" , tint = Color.White)
-                        Text("Courses" , style = TextStyle(color = Color.White))
+                        Text("Dashboard" , style = TextStyle(color = Color.White))
                     }
                     Column(Modifier.clickable { onNavigate(Routes.USERPROFILE) } , horizontalAlignment = Alignment.CenterHorizontally) {
                         Icon(Icons.Filled.Person, contentDescription = "Person Icon" , tint = Color.White)
@@ -81,83 +83,73 @@ fun DashboardScreen(
         },
     ) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            Row(horizontalArrangement = Arrangement.Center){
-                SearchBar(
-                    enteredText = {
-                        coroutineScope.launch { viewModel.searchCourses(it); }
-                    }
-                )
-            }
-
-            BannerAd(context)
-
-            // Search by category
-            Text("Search by Category" , modifier = Modifier.padding(10.dp), style = TextStyle(
-                fontSize = 30.sp
-            ))
-
-            LazyRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ){
-                item{
-                    Spacer(modifier = Modifier.width(4.dp))
-                }
-                items(categories!!.size) { index ->
-                    Spacer(modifier = Modifier.width(6.dp))
-                    ClickableText(text = AnnotatedString(text = categories[index].title) ,modifier = Modifier
-                        .background(
-                            Color.LightGray, shape = RoundedCornerShape(
-                                CornerSize(5.dp)
-                            )
-                        )
-                        .padding(start = 5.dp, end = 5.dp), onClick = {
-                        coroutineScope.launch {
-                            viewModel.getCoursesByCategory(categories[index]._id)
+            if(courses[0] == null || categories[0] == null){
+                Spacer(modifier = Modifier.padding(top = 100.dp))
+                Text("Loading");
+            }else{
+                Row(horizontalArrangement = Arrangement.Center){
+                    SearchBar(
+                        enteredText = {
+                            coroutineScope.launch { viewModel.searchCourses(it); }
                         }
-                    })
-                    Spacer(modifier = Modifier.width(3.dp))
+                    )
                 }
-            }
-            Spacer(modifier = Modifier.height(15.dp))
-            Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
-            Spacer(modifier = Modifier.height(10.dp))
-            Text("Currently Learning" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
 
-            Spacer(modifier = Modifier.height(30.dp))
-//            if(courses!!.isNotEmpty()){
-//
-//            }
-//            CourseCard(enrolledCourses!![0] , onCardClick = {
-//                runBlocking {
-//                    viewModel.setSelectedCourseId(enrolledCourses[0]._id)
-//                }
-//                onNavigate(Routes.COURSEDETAILS)
-//            })
-//            Spacer(modifier = Modifier.height(30.dp))
-//            CourseCard(enrolledCourses!![1], onCardClick = {
-//                runBlocking {
-//                    viewModel.setSelectedCourseId(enrolledCourses[1]._id)
-//                }
-//                onNavigate(Routes.COURSEDETAILS)
-//            })
-//            Spacer(modifier = Modifier.height(30.dp))
-            Row(horizontalArrangement = Arrangement.Center , modifier = Modifier.fillMaxWidth()){
-                ClickableText(text = AnnotatedString(text = "View courses") , onClick = {
-                    onNavigate(Routes.ENROLLEDCOURSES)
-                })
-            }
-            Spacer(modifier = Modifier.height(30.dp))
+                BannerAd(context)
 
-            Text("Explore courses" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
-            for(i in 0..(courses!!.size - 1)){
-                CourseCard(courses!![i] , onCardClick = {
-                    runBlocking {
-                        viewModel.setSelectedCourseId(courses!![i]._id)
+                // Search by category
+                Text("Search by Category" , modifier = Modifier.padding(10.dp), style = TextStyle(
+                    fontSize = 30.sp
+                ))
+
+                LazyRow(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ){
+                    item{
+                        Spacer(modifier = Modifier.width(4.dp))
                     }
-                    onNavigate(Routes.COURSEDETAILS)
-                })
+                    items(categories!!.size) { index ->
+                        Spacer(modifier = Modifier.width(6.dp))
+                        ClickableText(text = AnnotatedString(text = categories[index]!!.title) ,modifier = Modifier
+                            .background(
+                                Color.LightGray, shape = RoundedCornerShape(
+                                    CornerSize(5.dp)
+                                )
+                            )
+                            .padding(start = 5.dp, end = 5.dp), onClick = {
+                            coroutineScope.launch {
+                                viewModel.getCoursesByCategory(categories[index]!!._id)
+                            }
+                        })
+                        Spacer(modifier = Modifier.width(3.dp))
+                    }
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                Divider(color = Color.LightGray, thickness = 1.dp, modifier = Modifier.fillMaxWidth())
+                Spacer(modifier = Modifier.height(10.dp))
+                Text("Currently Learning" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
+
                 Spacer(modifier = Modifier.height(30.dp))
+
+                Row(horizontalArrangement = Arrangement.Center , modifier = Modifier.fillMaxWidth()){
+                    ClickableText(text = AnnotatedString(text = "View courses") , onClick = {
+                        onNavigate(Routes.ENROLLEDCOURSES)
+                    })
+                }
+                Spacer(modifier = Modifier.height(30.dp))
+
+                Text("Explore courses" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
+                for(i in 0..(courses.size - 1)){
+                    CourseCard(courses[i]!! , onCardClick = {
+//                        loading = true;
+                        runBlocking {
+                            viewModel.setSelectedCourseId(courses[i]!!._id)
+                        }
+                        onNavigate(Routes.COURSEDETAILS)
+                    })
+                    Spacer(modifier = Modifier.height(30.dp))
+                }
             }
         }
     }

@@ -52,7 +52,6 @@ fun LoginScreen(
     val viewModel:LoginViewModel = viewModel(factory = LoginViewModelFactory(context))
     val coroutineScope = rememberCoroutineScope()
     var loading by remember { mutableStateOf(false) }
-    var progress by remember { mutableStateOf(0f) }
     loading = true;
     LaunchedEffect(key1 = true){
         if(viewModel.getLoginStatus() == true){

@@ -26,6 +26,10 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
     val coursesList: LiveData<List<Course>>
         get() = _coursesList
 
+    private val _loading = MutableLiveData<Boolean>(false)
+    val loading: LiveData<Boolean>
+        get() = _loading
+
 //    private val _searchText = MutableLiveData<String>()
 //    val searchText: LiveData<String>
 //        get() = _searchText
@@ -145,5 +149,9 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
         }
 
         return false
+    }
+
+    fun toggleLoad(){
+        this._loading.value = !this._loading.value!!
     }
 }
