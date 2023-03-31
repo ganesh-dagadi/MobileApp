@@ -73,7 +73,7 @@ fun EnrolledCoursesScreen(
                 fontSize = 30.sp
             ))
 
-            BannerAd()
+            BannerAd(context)
 
             for(i in 0..(enrolledCourses!!.size - 1)){
                 CourseCard(enrolledCourses!![i] , onCardClick = {

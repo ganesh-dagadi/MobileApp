@@ -32,6 +32,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.components.LectureCard
+import com.example.linkedlearning.components.smallBannerAd
 import com.example.linkedlearning.data.api.course.data.Syllabu
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -119,6 +120,7 @@ fun CourseDetailsScreen(
                     Spacer(modifier = Modifier.width(40.dp))
                     Text("${courseData.EnrollmentCount} enrolled")
                 }
+                smallBannerAd()
             }
 
             Button(onClick =

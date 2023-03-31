@@ -1,3 +1,6 @@
+
+
+
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
@@ -6,13 +9,18 @@ plugins {
 android {
     namespace 'com.example.linkedlearning'
     compileSdk 33
-
+    def secretsFile = rootProject.file("secrets.properties")
+    def secrets = new Properties()
+    secrets.load(new FileInputStream(secretsFile))
     defaultConfig {
         applicationId "com.example.linkedlearning"
         minSdk 26
         targetSdk 32
         versionCode 1
         versionName "1.0"
+        manifestPlaceholders = [
+                admobAppId: secrets.ADMOB_APP_ID
+        ]
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -63,6 +71,9 @@ dependencies {
     implementation "com.squareup.retrofit2:retrofit:2.9.0"
     // GSON
     implementation "com.squareup.retrofit2:converter-gson:2.9.0"
+
+    //ads
+    implementation 'com.google.android.gms:play-services-ads:22.0.0'
 
     //Icons
     implementation "androidx.compose.material:material-icons-core:$compose_ui_version"

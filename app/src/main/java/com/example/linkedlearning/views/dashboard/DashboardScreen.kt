@@ -89,7 +89,7 @@ fun DashboardScreen(
                 )
             }
 
-            BannerAd()
+            BannerAd(context)
 
             // Search by category
             Text("Search by Category" , modifier = Modifier.padding(10.dp), style = TextStyle(

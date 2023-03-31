@@ -135,7 +135,7 @@ fun ProfileScreen(
             Spacer(modifier = Modifier.height(5.dp))
             Text(viewModel.email , textAlign = TextAlign.Center,style = TextStyle(fontSize = 20.sp) , modifier = Modifier.fillMaxWidth())
             Spacer(modifier = Modifier.height(20.dp))
-            BannerAd()
+            BannerAd(context)
             Spacer(modifier = Modifier.height(5.dp))
             Text("Courses Created" , style=TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(10.dp))
             Text("Visit the web app on desktop to modify your courses" , modifier = Modifier.padding(10.dp));

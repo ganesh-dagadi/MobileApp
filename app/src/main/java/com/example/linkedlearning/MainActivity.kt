@@ -3,6 +3,7 @@ package com.example.linkedlearning
 
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,6 +26,7 @@ import com.example.linkedlearning.views.courseShow.EnrolledCourses.EnrolledCours
 import com.example.linkedlearning.views.courseShow.NewQuestion.NewQuestionScreen
 import com.example.linkedlearning.views.courseShow.QuestionShow.QuestionShowScreen
 import com.example.linkedlearning.views.courseShow.courseDetails.CourseDetailsScreen
+import com.google.android.gms.ads.MobileAds
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
@@ -32,6 +34,9 @@ class MainActivity : ComponentActivity() {
     private lateinit var instance:MainActivity
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.i("UIEvent" , "before init")
+        MobileAds.initialize(this) {}
+        Log.i("UIEvent" , "passed init")
         val context: Context = this
         setContent {
             LinkedLearningTheme {
