@@ -99,9 +99,11 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
     }
 
     suspend fun getQuestions():Boolean{
+
         val courseId = repoInstance.getSelectedCourseId()
         val response = try{
             retrofitInstance.getAllQuestions(courseId!!)
+            //Log.i("APIEvent" , "after sending")
         }catch(e:IOException){
             triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
             return false
@@ -118,5 +120,23 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
 
     suspend fun setLectureId(_id: String):Unit{
         repoInstance.setSelectedLectureId(_id)
+    }
+
+    suspend fun rateCourse(rate:Int):Boolean{
+        val courseId = repoInstance.getSelectedCourseId()
+        val response = try{
+            Log.i("APIEvent" , "Before sending")
+            retrofitInstance.rateCourse(courseId!! , rate)
+        }catch(e:IOException){
+            triggerEvents(UIevents.ShowErrorSnackBar("Please check your internet connection"))
+            return false
+        }catch(e:HttpException){
+            triggerEvents(UIevents.ShowErrorSnackBar(msg = "Something went wrong. Please try again later"))
+            return false
+        }
+        if(response.code() == 200 && response.body() != null){
+            return true
+        }
+        return false
     }
 }

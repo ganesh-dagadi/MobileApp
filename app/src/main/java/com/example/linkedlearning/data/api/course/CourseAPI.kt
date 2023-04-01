@@ -40,4 +40,7 @@ interface CourseAPI {
 
     @GET("course/search")
     suspend fun searchCourses(@Query("title") title:String?):Response<getCoursesRes>
+
+    @PATCH("course/{courseId}/rate")
+    suspend fun rateCourse(@Path(value = "courseId", encoded = true)course_id: String? , @Query("rate")rate:Int):Response<NormalMsg>
 }

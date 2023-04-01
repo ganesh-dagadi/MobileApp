@@ -40,7 +40,7 @@ fun smallBannerAd(){
                 // on below line specifying ad unit id
                 setAdSize(AdSize.BANNER)
                 // currently added a test ad unit id.
-                adUnitId = BannerId
+                adUnitId = "ca-app-pub-3940256099942544/6300978111"
                 // calling load ad to load our ad.
                 loadAd(AdRequest.Builder().build())
             }

@@ -128,7 +128,10 @@ fun CourseDetailsScreen(
                         Spacer(modifier = Modifier.width(40.dp))
                         Text("${courseData.value!!.EnrollmentCount} enrolled")
                     }
+
+                    Spacer(modifier = Modifier.height(10.dp))
                     smallBannerAd()
+                    Spacer(modifier = Modifier.height(10.dp))
                 }
 
                 Button(onClick =
@@ -143,9 +146,59 @@ fun CourseDetailsScreen(
                     }
                 },
                     colors = ButtonDefaults.buttonColors(backgroundColor = MaterialTheme.colors.secondary),
-                    modifier = Modifier.padding(25.dp)
+                    modifier = Modifier.padding(10.dp)
                 ) {
                     Text("Enroll Now" , modifier = Modifier.padding(top = 1.dp , bottom = 1.dp , start = 2.dp , end = 2.dp), fontSize = 15.sp , color = MaterialTheme.colors.onPrimary)
+                }
+
+                Text("Rate the course" , style=TextStyle(fontSize = 20.sp))
+                Row(
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    Button(onClick = {
+                        coroutineScope.launch {
+                            if(viewModel.rateCourse(5)){
+                                showSnackBar("Thankyou for the rating")
+                            }else{
+                                showSnackBar("You already rated this course")}
+                        }
+                    } , modifier = Modifier.padding(10.dp).width(40.dp) , colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)) {
+                        Text("5")
+                    }
+                    Button(onClick = {  coroutineScope.launch {
+                        if(viewModel.rateCourse(4)){
+                            showSnackBar("Thankyou for the rating")
+                        }else{
+                            showSnackBar("You already rated this course")}
+                    } } , modifier = Modifier.padding(10.dp).width(40.dp) , colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)) {
+                        Text("4")
+                    }
+                    Button(onClick = {  coroutineScope.launch {
+                        Log.i("APIEvent" , "Before sending")
+                        if(viewModel.rateCourse(3)){
+                            showSnackBar("Thankyou for the rating")
+                        }else{
+                            showSnackBar("You already rated this course")}
+                    } } , modifier = Modifier.padding(10.dp).width(40.dp) , colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)) {
+                        Text("3")
+                    }
+                    Button(onClick = {  coroutineScope.launch {
+                        if(viewModel.rateCourse(2)){
+                            showSnackBar("Thankyou for the rating")
+                        }else{
+                            showSnackBar("You already rated this course")}
+                    } } , modifier = Modifier.padding(10.dp).width(40.dp) , colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)) {
+                        Text("2")
+                    }
+                    Button(onClick = {  coroutineScope.launch {
+                        if(viewModel.rateCourse(1)){
+                            showSnackBar("Thankyou for the rating")
+                        }else{
+                            showSnackBar("You already rated this course")}
+                    } } , modifier = Modifier.padding(10.dp).width(40.dp) , colors = ButtonDefaults.buttonColors(backgroundColor = Color.LightGray)) {
+                        Text("1")
+                    }
                 }
 
                 Row(
