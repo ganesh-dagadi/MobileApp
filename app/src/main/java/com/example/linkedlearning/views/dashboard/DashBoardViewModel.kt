@@ -151,7 +151,4 @@ class DashBoardViewModel(private val context:Context): ViewModel() {
         return false
     }
 
-    fun toggleLoad(){
-        this._loading.value = !this._loading.value!!
-    }
 }

@@ -88,11 +88,22 @@ fun CourseCard(
             Spacer(modifier = Modifier.height(10.dp))
             Text(courseDetail.title, style= TextStyle(fontSize = 20.sp) , modifier = Modifier.padding(start=5.dp))
             Spacer(modifier = Modifier.height(10.dp))
+            var rating = 0;
+            Log.i("UIEvent" , courseDetail.ratings.size.toString())
+            for(i in 0 until courseDetail.ratings.size){
+                Log.i("UIEvent" , i.toString())
+                rating+= courseDetail.ratings[i].rate
+            }
+        if(rating > 0){
+            rating /= courseDetail.ratings.size
+        }
+
+
             Row() {
-                repeat(4){
+                repeat(rating){
                     Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = Color(237, 226, 24))
                 }
-                repeat(1){
+                repeat(5 - rating){
                     Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = Color(186, 186, 184))
                 }
             }
@@ -101,7 +112,8 @@ fun CourseCard(
                 Spacer(modifier = Modifier.width(10.dp))
                 Image(
                     painter = rememberImagePainter(
-                        data = "https://res.cloudinary.com/dxm68x3tm/image/upload/w_40,h_40,c_scale/v1676117917/linkedLearning/ltomfva5vu19ma9xnsh2.png",
+//                        data = "https://res.cloudinary.com/dxm68x3tm/image/upload/w_40,h_40,c_scale/v1676117917/linkedLearning/ltomfva5vu19ma9xnsh2.png",
+                        data = courseDetail.owner.image,
                         builder = {
                             // You can customize the image loading with options here
                             // For example, you can set a placeholder or error drawable
@@ -111,9 +123,10 @@ fun CourseCard(
                     modifier = Modifier.size(40.dp).clip(CircleShape)
                 )
                 Spacer(modifier = Modifier.width(10.dp))
-                Text("Course creator")
+                Text(courseDetail.owner.username)
                 Spacer(modifier = Modifier.width(30.dp))
-                Text("3000 enrolled")
+                val enrollTxt = courseDetail.EnrollmentCount.toString() + " enrolled"
+                Text(enrollTxt)
             }
     }
 }

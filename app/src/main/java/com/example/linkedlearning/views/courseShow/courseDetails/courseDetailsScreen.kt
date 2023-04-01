@@ -30,6 +30,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberImagePainter
 import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.components.LectureCard
+import com.example.linkedlearning.components.LoadingScreen
+import com.example.linkedlearning.components.Navbar
 import com.example.linkedlearning.components.smallBannerAd
 import com.example.linkedlearning.data.api.course.data.Course
 import com.example.linkedlearning.data.api.course.data.Syllabu
@@ -71,47 +73,46 @@ fun CourseDetailsScreen(
                         .padding(top = 5.dp)
 
                 ) {
-                    Column(Modifier.clickable { onNavigate(Routes.DASHBOARD) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Article , contentDescription = "Article icon" , tint = Color.White)
-                        Text("Dashboard" , style = TextStyle(color = Color.White))
-                    }
-                    Column(Modifier.clickable { onNavigate(Routes.USERPROFILE) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Person, contentDescription = "Person Icon" , tint = Color.White)
-                        Text("Profile" , style = TextStyle(color = Color.White))
-                    }
-                    Column(Modifier.clickable { onNavigate(Routes.SIGNUP) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Logout ,  contentDescription = "Logout Icon" , tint = Color.White)
-                        Text("Logout" ,style = TextStyle(color = Color.White))
-                    }
+                    Navbar(onNavigate = {
+                        onNavigate(it) } ,  context = context)
+
+
                 }
             }
         },
     ) {
         Column(modifier = Modifier.verticalScroll(rememberScrollState())){
             if(courseData.value == null){
-                Spacer(modifier = Modifier.height(100.dp))
-                Text("Loading")
+                LoadingScreen()
             }else{
                 Text(text = courseData.value!!.title , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 25.dp , top = 20.dp ,end = 25.dp))
                 Text(text= courseData.value!!.descp , style= TextStyle(fontSize = 16.sp) , modifier = Modifier.padding(start = 25.dp , top = 20.dp , end = 25.dp))
                 Spacer(modifier = Modifier.height(20.dp))
                 Column(horizontalAlignment = Alignment.CenterHorizontally , modifier = Modifier.fillMaxWidth()) {
+                    var rating = 0;
+                    Log.i("UIEvent" , courseData.value!!.ratings.size.toString())
+                    for(i in 0 until courseData.value!!.ratings.size){
+                        Log.i("UIEvent" , i.toString())
+                        rating+= courseData.value!!.ratings[i].rate
+                    }
+                    if(rating > 0){
+                        rating /= courseData.value!!.ratings.size
+                    }
                     Row() {
-                        repeat(4){
+                        repeat(rating){
                             Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = Color(237, 226, 24))
                         }
-                        repeat(1){
+                        repeat(5-rating){
                             Icon(imageVector = Icons.Outlined.Star, contentDescription = null, tint = Color(186, 186, 184))
                         }
                     }
-                    Text("4.2")
                     Row(modifier = Modifier
                         .fillMaxWidth()
                         .height(40.dp) , verticalAlignment = Alignment.CenterVertically){
                         Spacer(modifier = Modifier.width(25.dp))
                         Image(
                             painter = rememberImagePainter(
-                                data = "https://res.cloudinary.com/dxm68x3tm/image/upload/w_40,h_40,c_scale/v1676117917/linkedLearning/ltomfva5vu19ma9xnsh2.png",
+                                data = courseData.value!!.owner.image,
                                 builder = {
                                     // You can customize the image loading with options here
                                     // For example, you can set a placeholder or error drawable
@@ -123,7 +124,7 @@ fun CourseDetailsScreen(
                                 .clip(CircleShape)
                         )
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text("Course creator")
+                        Text(courseData.value!!.owner.username)
                         Spacer(modifier = Modifier.width(40.dp))
                         Text("${courseData.value!!.EnrollmentCount} enrolled")
                     }
@@ -172,9 +173,10 @@ fun CourseDetailsScreen(
                         var topics = syllabusCopy[i].subTopics.split(",")
                         Log.i("UIEvent" , topics.toString())
                         for(j in 0..(topics.size - 1)){
-                            Text(topics[j] , modifier = Modifier.padding(10.dp))
+                            Text(topics[j] , modifier = Modifier.padding(start = 20.dp , top = 10.dp , bottom = 10.dp))
                         }
                     }
+                    Spacer(modifier = Modifier.height(100.dp))
                 }else if (currentView == "LECTURES"){
                     Spacer(modifier = Modifier.height(20.dp))
                     Column(modifier = Modifier

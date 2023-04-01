@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.linkedlearning.SECRETS.BannerId
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.AdSize
 import com.google.android.gms.ads.AdView
@@ -39,7 +40,7 @@ fun smallBannerAd(){
                 // on below line specifying ad unit id
                 setAdSize(AdSize.BANNER)
                 // currently added a test ad unit id.
-                adUnitId = "ca-app-pub-3940256099942544/6300978111"
+                adUnitId = BannerId
                 // calling load ad to load our ad.
                 loadAd(AdRequest.Builder().build())
             }

@@ -30,6 +30,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.MainActivity
 import com.example.linkedlearning.R
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.components.LoadingScreen
 import com.example.linkedlearning.data.authData.AuthRepo
 import com.example.linkedlearning.views.UIevents
 import com.example.linkedlearning.views.auth.signup.SignupViewModel
@@ -57,6 +58,7 @@ fun LoginScreen(
         if(viewModel.getLoginStatus() == true){
             onNavigate(Routes.DASHBOARD)
         }else{
+            Log.i("APIEvent" , "setting loading false")
             loading = false
         }
     }
@@ -81,8 +83,7 @@ fun LoginScreen(
     Scaffold(scaffoldState = scaffoldState) {
         Column(modifier = Modifier.fillMaxWidth() , horizontalAlignment = Alignment.CenterHorizontally) {
             if(loading){
-                Spacer(modifier = Modifier.padding(top = 100.dp))
-                Text("Loading")
+                LoadingScreen()
             }else{
                 Image(
                     painter = painterResource(id = R.drawable.linked_learning__logo),

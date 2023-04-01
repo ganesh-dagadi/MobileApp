@@ -31,6 +31,8 @@ import coil.compose.rememberAsyncImagePainter
 import com.example.linkedlearning.Utils.Routes
 import com.example.linkedlearning.components.BannerAd
 import com.example.linkedlearning.components.CourseCard
+import com.example.linkedlearning.components.LoadingScreen
+import com.example.linkedlearning.components.Navbar
 import com.example.linkedlearning.data.api.course.data.Course
 import com.example.linkedlearning.views.dashboard.DashBoardViewModel
 import com.example.linkedlearning.views.dashboard.DashboardScreenViewModelFactory
@@ -80,27 +82,17 @@ fun ProfileScreen(
                         .padding(top = 5.dp)
 
                 ) {
-                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Article , contentDescription = "Article icon" , tint = Color.White)
-                        Text("Courses" , style = TextStyle(color = Color.White))
+                    Navbar(onNavigate = {
+                        onNavigate(it) } , context = context)
                     }
-                    Column(Modifier.clickable { onNavigate(Routes.USERPROFILE) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Person, contentDescription = "Person Icon" , tint = Color.White)
-                        Text("Profile" , style = TextStyle(color = Color.White))
-                    }
-                    Column(Modifier.clickable { onNavigate(Routes.SIGNUP) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Logout ,  contentDescription = "Logout Icon" , tint = Color.White)
-                        Text("Logout" ,style = TextStyle(color = Color.White))
-                    }
-                }
+
+
             }
         }
     ){
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             if(username.value == null || email.value == null || imageUrl.value == null || courses!![0] == null){
-                Spacer(modifier = Modifier.height(100.dp))
-                Log.i("APIEvent" , "here")
-                Text("Loading")
+                LoadingScreen()
             }else{
                 val newImageString = viewModel.imageUrl.value!!.substring(0, 49)+ "/w_$screenWidthPx,h_$heightImgPx,c_scale" + viewModel.imageUrl.value!!.substring(49)
                 Spacer(modifier = Modifier.height(20.dp))

@@ -28,4 +28,7 @@ interface AuthAPI {
 
     @GET("auth/protected")
     suspend fun getProtected():Response<LoginRes>
+
+    @PATCH("auth/logout")
+    suspend fun logoutUser():Response<SignupResponse>
 }

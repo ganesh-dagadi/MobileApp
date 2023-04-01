@@ -29,9 +29,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.Utils.Routes
-import com.example.linkedlearning.components.BannerAd
-import com.example.linkedlearning.components.CourseCard
-import com.example.linkedlearning.components.SearchBar
+import com.example.linkedlearning.components.*
 import com.example.linkedlearning.data.api.course.data.Category
 import com.example.linkedlearning.data.api.course.data.Course
 import kotlinx.coroutines.launch
@@ -66,27 +64,20 @@ fun DashboardScreen(
                         .padding(top = 5.dp)
 
                 ) {
-                    Column(Modifier.clickable { onNavigate(Routes.DASHBOARD) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Article , contentDescription = "Article icon" , tint = Color.White)
-                        Text("Dashboard" , style = TextStyle(color = Color.White))
-                    }
-                    Column(Modifier.clickable { onNavigate(Routes.USERPROFILE) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Person, contentDescription = "Person Icon" , tint = Color.White)
-                        Text("Profile" , style = TextStyle(color = Color.White))
-                    }
-                    Column(Modifier.clickable { onNavigate(Routes.SIGNUP) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Logout ,  contentDescription = "Logout Icon" , tint = Color.White)
-                        Text("Logout" ,style = TextStyle(color = Color.White))
-                    }
+                    Navbar(onNavigate = {
+                        onNavigate(it) } ,  context = context)
                 }
             }
         },
     ) {
+
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-            if(courses[0] == null || categories[0] == null){
-                Spacer(modifier = Modifier.padding(top = 100.dp))
-                Text("Loading");
+            Log.i("UIEvent" , courses.size.toString())
+
+            if(courses.isNotEmpty() && (courses[0] == null || categories[0] == null)){
+               LoadingScreen()
             }else{
+
                 Row(horizontalArrangement = Arrangement.Center){
                     SearchBar(
                         enteredText = {
@@ -109,7 +100,7 @@ fun DashboardScreen(
                     item{
                         Spacer(modifier = Modifier.width(4.dp))
                     }
-                    items(categories!!.size) { index ->
+                    items(categories.size) { index ->
                         Spacer(modifier = Modifier.width(6.dp))
                         ClickableText(text = AnnotatedString(text = categories[index]!!.title) ,modifier = Modifier
                             .background(
@@ -140,16 +131,20 @@ fun DashboardScreen(
                 Spacer(modifier = Modifier.height(30.dp))
 
                 Text("Explore courses" , style = TextStyle(fontSize = 30.sp) , modifier = Modifier.padding(start = 10.dp))
-                for(i in 0..(courses.size - 1)){
-                    CourseCard(courses[i]!! , onCardClick = {
+                Log.i("APIEvent" , courses.size.toString())
+                if(courses.isNotEmpty()){
+                    for(i in 0 until courses.size){
+                        CourseCard(courses[i]!! , onCardClick = {
 //                        loading = true;
-                        runBlocking {
-                            viewModel.setSelectedCourseId(courses[i]!!._id)
-                        }
-                        onNavigate(Routes.COURSEDETAILS)
-                    })
-                    Spacer(modifier = Modifier.height(30.dp))
+                            runBlocking {
+                                viewModel.setSelectedCourseId(courses[i]!!._id)
+                            }
+                            onNavigate(Routes.COURSEDETAILS)
+                        })
+                        Spacer(modifier = Modifier.height(30.dp))
+                    }
                 }
+
             }
         }
     }

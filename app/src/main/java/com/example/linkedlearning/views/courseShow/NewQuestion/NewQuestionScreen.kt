@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.linkedlearning.Utils.Routes
+import com.example.linkedlearning.components.Navbar
 import com.example.linkedlearning.views.auth.login.LoginViewModel
 import com.example.linkedlearning.views.auth.login.LoginViewModelFactory
 import kotlinx.coroutines.launch
@@ -56,18 +57,8 @@ fun NewQuestionScreen(
                         .padding(top = 5.dp)
 
                 ) {
-                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Article , contentDescription = "Article icon" , tint = Color.White)
-                        Text("Courses" , style = TextStyle(color = Color.White))
-                    }
-                    Column(Modifier.clickable { onNavigate(Routes.LOGIN) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Person, contentDescription = "Person Icon" , tint = Color.White)
-                        Text("Profile" , style = TextStyle(color = Color.White))
-                    }
-                    Column(Modifier.clickable { onNavigate(Routes.SIGNUP) } , horizontalAlignment = Alignment.CenterHorizontally) {
-                        Icon(Icons.Filled.Logout ,  contentDescription = "Logout Icon" , tint = Color.White)
-                        Text("Logout" ,style = TextStyle(color = Color.White))
-                    }
+                    Navbar(onNavigate = {
+                        onNavigate(it) } ,  context = context)
                 }
             }
         },
