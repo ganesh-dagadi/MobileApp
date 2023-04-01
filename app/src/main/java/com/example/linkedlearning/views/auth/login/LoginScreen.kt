@@ -52,15 +52,17 @@ fun LoginScreen(
 ){
     val viewModel:LoginViewModel = viewModel(factory = LoginViewModelFactory(context))
     val coroutineScope = rememberCoroutineScope()
+    var key by remember { mutableStateOf(0) }
     var loading by remember { mutableStateOf(false) }
-    loading = true;
+//    loading = true;
     LaunchedEffect(key1 = true){
-        if(viewModel.getLoginStatus() == true){
+        if(viewModel.getLoginStatus() == true) {
             onNavigate(Routes.DASHBOARD)
-        }else{
-            Log.i("APIEvent" , "setting loading false")
-            loading = false
         }
+//        }else{
+//            Log.i("APIEvent" , "setting loading false")
+//            loading = false
+//        }
     }
     val email = viewModel.email.observeAsState()
     val password = viewModel.password.observeAsState()
@@ -82,9 +84,9 @@ fun LoginScreen(
 
     Scaffold(scaffoldState = scaffoldState) {
         Column(modifier = Modifier.fillMaxWidth() , horizontalAlignment = Alignment.CenterHorizontally) {
-            if(loading){
-                LoadingScreen()
-            }else{
+//            if(loading){
+//                LoadingScreen()
+//            }else{
                 Image(
                     painter = painterResource(id = R.drawable.linked_learning__logo),
                     contentDescription = "Logo",
@@ -118,7 +120,7 @@ fun LoginScreen(
                 //Button
                 Button(onClick = {
                     coroutineScope.launch {
-                        loading = true;
+                        //loading = true;
                         if(viewModel.login()){
                             showSnackBar("Logged in successfully")
                             onNavigate(Routes.DASHBOARD)
@@ -136,6 +138,6 @@ fun LoginScreen(
                     onNavigate(Routes.SIGNUP)
                 } , modifier = Modifier.padding(10.dp) , style = TextStyle(color = Blue , fontSize = 15.sp) )
             }
-        }
+//        }
     }
 }

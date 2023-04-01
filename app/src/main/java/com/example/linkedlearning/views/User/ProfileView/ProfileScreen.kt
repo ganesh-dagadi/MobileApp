@@ -52,7 +52,8 @@ fun dpToPx(dp: Dp): Int {
 @Composable
 fun ProfileScreen(
     onNavigate : (to:String)->Unit,
-    context: Context
+    context: Context,
+    showSnackBar:(to:String)->Unit,
 ){
     val viewModel:ProfileViewModel = viewModel(factory = ProfileScreenViewModelFactory(context))
     val username = viewModel.username.observeAsState(null);
@@ -110,7 +111,7 @@ fun ProfileScreen(
 
                         // on below line we are adding content
                         // description for our image.
-                        contentDescription = "gfg image",
+                        contentDescription = "profile image",
 
                         // on below line we are adding modifier for our
                         // image as wrap content for height and width.
@@ -122,7 +123,7 @@ fun ProfileScreen(
 
                     IconButton(
                         onClick = {
-                            Log.i("UIEvent" , "CLicked")
+                            showSnackBar("Visit the web app to edit profile picture")
                         },
                         modifier = Modifier
                             .size(100.dp)

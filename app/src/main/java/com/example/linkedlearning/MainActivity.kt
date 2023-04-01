@@ -133,7 +133,12 @@ class MainActivity : ComponentActivity() {
                         composable(Routes.USERPROFILE){
                             ProfileScreen(onNavigate = {
                                 navController.navigate(it)
-                            }, context = context
+                            }, context = context,
+                                showSnackBar = {
+                                    GlobalScope.launch {
+                                        scaffoldState.snackbarHostState.showSnackbar(it)
+                                    }
+                                }
                             )
                         }
                     }
