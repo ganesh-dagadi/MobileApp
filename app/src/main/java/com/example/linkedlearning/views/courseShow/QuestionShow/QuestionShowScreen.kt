@@ -82,7 +82,7 @@ fun QuestionShowScreen(
                 if(question!!.descp != null){
                     Text(question!!.descp!!)
                 }
-                BannerAd(context)
+
                 Text("Answers" , style= TextStyle(fontSize = 25.sp) , modifier = Modifier.padding(top = 10.dp))
                 for(i in 0 until question.answers.size){
                     Text(question.answers[i].answer!! , fontSize = 17.sp , modifier = Modifier.padding(top = 10.dp , bottom = 10.dp))

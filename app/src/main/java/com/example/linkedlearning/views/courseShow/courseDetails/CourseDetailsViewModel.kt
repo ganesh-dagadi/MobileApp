@@ -50,7 +50,7 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
 
     suspend fun getCourseData():Boolean{
         val courseId = repoInstance.getSelectedCourseId()
-
+        Log.i("APIEvent" , courseId.toString())
         val response = try{
             retrofitInstance.getCourseById(courseId!!)
         }catch(e:IOException){
@@ -60,7 +60,8 @@ class CourseDetailsViewModel(private val context : Context):ViewModel() {
             triggerEvents(UIevents.ShowErrorSnackBar(msg = "Something went wrong. Please try again later"))
             return false
         }
-        Log.i("APIEvent" , response.body()!!.toString())
+        Log.i("APIEvent" , response.code().toString())
+
         if(response.code() == 200 && response.body() != null){
             this._courseData.value = response.body()!!.foundCourse
         }else if(response.errorBody() != null){

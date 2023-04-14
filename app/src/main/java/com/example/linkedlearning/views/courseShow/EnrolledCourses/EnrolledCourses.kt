@@ -72,9 +72,6 @@ fun EnrolledCoursesScreen(
                 Text("Enrolled Courses" , modifier = Modifier.padding(10.dp), style = TextStyle(
                     fontSize = 30.sp
                 ))
-
-                BannerAd(context)
-
                 for(i in 0 until enrolledCourses.size){
                     CourseCard(enrolledCourses[i]!! , onCardClick = {
 
